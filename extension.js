@@ -5,6 +5,7 @@ const part       = require('./src/scaffolds/part');
 const stories    = require('./src/scaffolds/stories');
 const style      = require('./src/scaffolds/style');
 const javascript = require('./src/scaffolds/javascript');
+const block      = require('./src/scaffolds/block');
 
 function activate(context) {
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
@@ -52,6 +53,30 @@ function activate(context) {
     const template = javascript.template(folder);
     
     file.create(filePath, template, open);
+  }
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Block PHP File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createComponentBlockPhpFile = ( folder, open = false ) => {
+    const phpFilePath = syntax.getFile(folder, '.block.php');
+    const phpTemplate = block.phpTemplate(folder);
+    
+    file.create(phpFilePath, phpTemplate, open);
+  }
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Block JSON File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createComponentBlockJsonFile = ( folder, open = false ) => {
+    const jsonFilePath = syntax.getFile(folder, '.block.json');
+    const jsonTemplate = block.jsonTemplate(folder);
+    
+    file.create(jsonFilePath, jsonTemplate, open);
   }
 
   
@@ -103,10 +128,20 @@ function activate(context) {
 
 
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Generate Component Block Files
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  let generateBlockFiles = vscode.commands.registerCommand('atomic-component-suite.generateComponentBlockFiles', (folder) => {
+    createComponentBlockPhpFile(folder, true);
+    createComponentBlockJsonFile(folder, true);
+  });
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
   // ✅ Subscribe Commands
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  context.subscriptions.push(generateFiles, generatePartFile, generateStoriesFile, generateStyleFile, generateJavascriptFile);
+  context.subscriptions.push(generateFiles, generatePartFile, generateStoriesFile, generateStyleFile, generateJavascriptFile, generateBlockFiles);
 }
 
 module.exports = {
