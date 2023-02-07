@@ -14,6 +14,20 @@
 	"categories": [
 		"Other"
 	],
+	"activationEvents": [
+		"onCommand:atomic-component-suite.generateComponentFiles",
+		"onCommand:atomic-component-suite.generateComponentPartFile",
+		"onCommand:atomic-component-suite.generateComponentStoriesFile",
+		"onCommand:atomic-component-suite.generateComponentStyleFile",
+		"onCommand:atomic-component-suite.generateComponentJavascriptFile",
+		"onCommand:atomic-component-suite.generateComponentBlockFiles",
+		"onCommand:atomic-component-suite.generateCarouselTemplate",
+		"onCommand:atomic-component-suite.generateClickableTemplate",
+		"onCommand:atomic-component-suite.generateFeaturedTemplate",
+		"onCommand:atomic-component-suite.generateHeroTemplate",
+		"onCommand:atomic-component-suite.generatePluralTemplate",
+		"onCommand:atomic-component-suite.generateSectionTemplate"
+	],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [
