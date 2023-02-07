@@ -26,6 +26,18 @@ const toFirstLetter = function (string) {
   return string.charAt(0);
 }
 
+const toSingular = function (string) {
+  if (string.endsWith('s')) {
+    return string.slice(0, -1);
+  } else if (string.endsWith('ies')) {
+    return string.slice(0, -3) + 'y';
+  } else if (string.endsWith('es')) {
+    return string.slice(0, -2);
+  } else {
+    return string;
+  }
+}
+
 module.exports = {
   toCapsAndSpaces,
   toLowAndSpaces,
@@ -33,5 +45,6 @@ module.exports = {
   lowAndSnake,
   toCapsAndCamel,
   toLowAndCamel,
-  toFirstLetter
+  toFirstLetter,
+  toSingular
 }

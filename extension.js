@@ -6,6 +6,7 @@ const stories    = require('./src/scaffolds/stories');
 const style      = require('./src/scaffolds/style');
 const javascript = require('./src/scaffolds/javascript');
 const block      = require('./src/scaffolds/block');
+const templates  = require('./src/scaffolds/templates');
 
 function activate(context) {
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
@@ -79,6 +80,40 @@ function activate(context) {
     file.create(jsonFilePath, jsonTemplate, open);
   }
 
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Template Files
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createTemplateFiles = (folder, templateName) => {
+    if (!templates.hasOwnProperty(templateName)) return;
+
+    const template = templates[templateName];
+
+    let files = {
+      '.php'        : 'part',
+      '.js'         : 'javascript',
+      '.scss'       : 'style',
+      '.stories.php': 'stories'
+    }
+
+    const filtered = Object.entries(files)
+    .filter(([key, value]) => (template.hasOwnProperty(value) && template[value]))
+    .reduce((obj, [key, value]) => {
+      obj[key] = value;
+      return obj;
+    }, {});
+
+    const firstExt = Object.keys(filtered)[0];
+
+    for (let ext in filtered) {
+      const method = files[ext];
+      
+      const filePath = syntax.getFile(folder, ext);
+      file.create(filePath, template[method](folder), ext === firstExt);
+    }
+  }
+
   
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
   // ✅ Generate Component Files
@@ -138,10 +173,39 @@ function activate(context) {
 
 
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Generate Template
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  let generateCarouselTemplate = vscode.commands.registerCommand('atomic-component-suite.generateCarouselTemplate', (folder) => {
+    createTemplateFiles(folder, 'carousel');
+  });
+
+  let generateClickableTemplate = vscode.commands.registerCommand('atomic-component-suite.generateClickableTemplate', (folder) => {
+    createTemplateFiles(folder, 'clickable');
+  });
+
+  let generateFeaturedTemplate = vscode.commands.registerCommand('atomic-component-suite.generateFeaturedTemplate', (folder) => {
+    createTemplateFiles(folder, 'featured');
+  });
+
+  let generateHeroTemplate = vscode.commands.registerCommand('atomic-component-suite.generateHeroTemplate', (folder) => {
+    createTemplateFiles(folder, 'hero');
+  });
+
+  let generatePluralTemplate = vscode.commands.registerCommand('atomic-component-suite.generatePluralTemplate', (folder) => {
+    createTemplateFiles(folder, 'plural');
+  });
+
+  let generateSectionTemplate = vscode.commands.registerCommand('atomic-component-suite.generateSectionTemplate', (folder) => {
+    createTemplateFiles(folder, 'section');
+  });
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
   // ✅ Subscribe Commands
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  context.subscriptions.push(generateFiles, generatePartFile, generateStoriesFile, generateStyleFile, generateJavascriptFile, generateBlockFiles);
+  context.subscriptions.push(generateFiles, generatePartFile, generateStoriesFile, generateStyleFile, generateJavascriptFile, generateBlockFiles,generateCarouselTemplate,generateClickableTemplate,generateFeaturedTemplate,generateHeroTemplate,generatePluralTemplate,generateSectionTemplate);
 }
 
 module.exports = {
