@@ -1,15 +1,15 @@
-const carousel  = require('./templates/carousel');
-const clickable = require('./templates/clickable');
-const featured  = require('./templates/featured');
-const hero      = require('./templates/hero');
-const plural    = require('./templates/plural');
-const section   = require('./templates/section');
+const button   = require('./templates/button');
+const slider   = require('./templates/slider');
+const featured = require('./templates/featured');
+const hero     = require('./templates/hero');
+const plural   = require('./templates/plural');
+const section  = require('./templates/section');
 
 module.exports = {
-  carousel,
-  clickable,
-  featured,
+  button,
+  slider,
+  section,
   hero,
+  featured,
   plural,
-  section
 }

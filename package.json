@@ -21,8 +21,8 @@
 		"onCommand:atomic-component-suite.generateComponentStyleFile",
 		"onCommand:atomic-component-suite.generateComponentJavascriptFile",
 		"onCommand:atomic-component-suite.generateComponentBlockFiles",
-		"onCommand:atomic-component-suite.generateCarouselTemplate",
-		"onCommand:atomic-component-suite.generateClickableTemplate",
+		"onCommand:atomic-component-suite.generateSliderTemplate",
+		"onCommand:atomic-component-suite.generateButtonTemplate",
 		"onCommand:atomic-component-suite.generateFeaturedTemplate",
 		"onCommand:atomic-component-suite.generateHeroTemplate",
 		"onCommand:atomic-component-suite.generatePluralTemplate",
@@ -56,12 +56,12 @@
 				"title": "Block"
 			},
 			{
-				"command": "atomic-component-suite.generateCarouselTemplate",
-				"title": "Carousel"
+				"command": "atomic-component-suite.generateSliderTemplate",
+				"title": "Slider"
 			},
 			{
-				"command": "atomic-component-suite.generateClickableTemplate",
-				"title": "Clickable"
+				"command": "atomic-component-suite.generateButtonTemplate",
+				"title": "Button"
 			},
 			{
 				"command": "atomic-component-suite.generateFeaturedTemplate",
@@ -141,40 +141,40 @@
 			],
 			"atomic-component-suite.generate.templates": [
 				{
-					"command": "atomic-component-suite.generateCarouselTemplate",
-					"group": "2_workspace@2",
-					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(molecules|organisms)\\//"
-				},
-				{
-					"command": "atomic-component-suite.generateClickableTemplate",
-					"group": "2_workspace@3",
+					"command": "atomic-component-suite.generateButtonTemplate",
+					"group": "2_workspace@1",
 					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules)\\//"
 				},
 				{
-					"command": "atomic-component-suite.generateFeaturedTemplate",
-					"group": "2_workspace@4",
-					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/organisms\\//"
-				},
-				{
-					"command": "atomic-component-suite.generateHeroTemplate",
-					"group": "2_workspace@5",
-					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/organisms\\//"
-				},
-				{
 					"command": "atomic-component-suite.generatePluralTemplate",
-					"group": "2_workspace@6",
+					"group": "2_workspace@2",
 					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/molecules\\//"
 				},
 				{
 					"command": "atomic-component-suite.generateSectionTemplate",
-					"group": "2_workspace@7",
+					"group": "2_workspace@3",
 					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/organisms\\//"
+				},
+				{
+					"command": "atomic-component-suite.generateHeroTemplate",
+					"group": "2_workspace@4",
+					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/organisms\\//"
+				},
+				{
+					"command": "atomic-component-suite.generateFeaturedTemplate",
+					"group": "2_workspace@5",
+					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/organisms\\//"
+				},
+				{
+					"command": "atomic-component-suite.generateSliderTemplate",
+					"group": "2_workspace@6",
+					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(molecules|organisms)\\//"
 				}
 			],
 			"explorer/context": [
 				{
 					"submenu": "atomic-component-suite.generate",
-					"group": "2_workspace@1",
+					"group": "2_workspace@7",
 					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
 				}
 			],
@@ -200,11 +200,11 @@
 					"when": "never"
 				},
 				{
-					"command": "atomic-component-suite.generateCarouselTemplate",
+					"command": "atomic-component-suite.generateSliderTemplate",
 					"when": "never"
 				},
 				{
-					"command": "atomic-component-suite.generateClickableTemplate",
+					"command": "atomic-component-suite.generateButtonTemplate",
 					"when": "never"
 				},
 				{
