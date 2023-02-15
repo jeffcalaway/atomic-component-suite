@@ -9,30 +9,30 @@ const part = function (file) {
   const className = `${dirLetter}-${folderName}`;
 
   return `<?php
-  $props->admit_props([
-      'id',
-  ]);
+    $props->admit_props([
+        'id',
+    ]);
 
-  $props->set_attributes([
-      'id'
-  ]);
+    $props->set_attributes([
+        'id'
+    ]);
 
-  extract($props->to_array());
+    extract($props->to_array());
 
-  $class = $props->class([
-      '${className}'
-  ]);
+    $class = $props->class([
+        '${className}'
+    ]);
 ?>
 
 <?php if ( $items ) : ?>
-  <header
-      <?php echo $id_attr; ?>
-      class="<?php echo $class; ?>"
-  >
-      <div class="${className}__container u-container">
-          
-      </div>
-  </header>
+    <header
+        <?php echo $id_attr; ?>
+        class="<?php echo $class; ?>"
+    >
+        <div class="${className}__container u-container">
+            
+        </div>
+    </header>
 <?php endif; ?>`;
 }
 

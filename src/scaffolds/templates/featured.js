@@ -21,34 +21,34 @@ const part = function (file) {
   const moleculePath = `molecules/${moleculeName}`;
 
   return `<?php
-  $props->admit_props([
-      'id',
-      'items'
-  ]);
+    $props->admit_props([
+        'id',
+        'items'
+    ]);
 
-  $props->set_attributes([
-      'id'
-  ]);
+    $props->set_attributes([
+        'id'
+    ]);
 
-  extract($props->to_array());
+    extract($props->to_array());
 
-  $class = $props->class([
-      '${className}'
-  ]);
+    $class = $props->class([
+        '${className}'
+    ]);
 ?>
 
 <?php if ( $items ) : ?>
-  <section
-      <?php echo $id_attr; ?>
-      class="<?php echo $class; ?>"
-  >
-      <div class="${className}__container u-container">
-          <?php render_template_part('${moleculePath}', [
-              'class' => '${className}__${lastWord}',
-              'items' => $items
-          ]); ?>
-      </div>
-  </section>
+    <section
+        <?php echo $id_attr; ?>
+        class="<?php echo $class; ?>"
+    >
+        <div class="${className}__container u-container">
+            <?php render_template_part('${moleculePath}', [
+                'class' => '${className}__${lastWord}',
+                'items' => $items
+            ]); ?>
+        </div>
+    </section>
 <?php endif; ?>`;
 }
 
@@ -74,29 +74,29 @@ const stories = function (file) {
   const dirTitle    = format.toCapsAndSpaces(dirName);
 
   return `<?php
-  
-  use Useful_Stories\\Library\\Stories;
+
+    use Useful_Stories\\Library\\Stories;
+
+    class ${folderClass} extends Stories {
+        function __construct(){
+            $this->title    = '${dirTitle}/${folderTitle}';
+            $this->defaults = [
+              'items' => array_fill(0,3,[
+                  
+              ])
+            ];
+        }
     
-  class ${folderClass} extends Stories {
-      function __construct(){
-          $this->title    = '${dirTitle}/${folderTitle}';
-          $this->defaults = [
-            'items' => array_fill(0,3,[
-                
-            ])
-          ];
-      }
-  
-      function template($args=[]) {
-          $args = wp_parse_args($args, $this->defaults);
-  
-          render_template_part('${dirName}/${folderName}', $args);
-      }
+        function template($args=[]) {
+            $args = wp_parse_args($args, $this->defaults);
     
-      function initialize() {
-          $default = $this->add_story('Default', [$this, 'template']);
-      }
-  }`;
+            render_template_part('${dirName}/${folderName}', $args);
+        }
+
+        function initialize() {
+            $default = $this->add_story('Default', [$this, 'template']);
+        }
+    }`;
 }
 
 module.exports = {
