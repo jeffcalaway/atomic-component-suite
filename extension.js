@@ -1,12 +1,17 @@
 const vscode     = require('vscode');
 const file       = require('./src/utils/file');
 const syntax     = require('./src/utils/syntax');
+const format     = require('./src/utils/format');
 const part       = require('./src/scaffolds/part');
 const stories    = require('./src/scaffolds/stories');
 const style      = require('./src/scaffolds/style');
 const javascript = require('./src/scaffolds/javascript');
 const block      = require('./src/scaffolds/block');
 const templates  = require('./src/scaffolds/templates');
+const classes    = require('./src/scaffolds/classes');
+const postType   = require('./src/scaffolds/postType');
+const taxonomy   = require('./src/scaffolds/taxonomy');
+const fs         = require('fs');
 
 function activate(context) {
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
@@ -114,6 +119,184 @@ function activate(context) {
     }
   }
 
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Module File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createModuleFile = ( folder, open = false ) => {
+    const pluralName = syntax.getName(folder);
+    const dirPath    = syntax.getDirPath(folder);
+    const filePath   = `${dirPath}/class-${pluralName}.php`;
+    const template   = classes.parentModule.template(folder);
+
+
+    if (!fs.existsSync(filePath)) {
+      file.create(filePath, template, open);
+    }
+  }
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Template Blocks File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createTemplateBlocksFile = ( folder, open = false ) => {
+    const folderPath = syntax.getPath(folder);
+    const filePath   = `${folderPath}/class-template-blocks.php`;
+    const template   = classes.templateBlocks.template(folder);
+    
+    file.create(filePath, template, open);
+  }
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Template Data File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createTemplateDataFile = ( folder, open = false ) => {
+    const folderPath = syntax.getPath(folder);
+    const filePath   = `${folderPath}/class-template-data.php`;
+    const template   = classes.templateData.template(folder);
+    
+    file.create(filePath, template, open);
+  }
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create PostType Functions File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createPostTypeFunctionsFile = ( folder, open = false ) => {
+    const folderPath = syntax.getPath(folder);
+    const filePath   = `${folderPath}/functions.php`;
+    const template   = postType.functions.template(folder);
+    
+    file.create(filePath, template, open);
+  }
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create PostType Interface File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createPostTypeInterfaceFile = ( folder, open = false ) => {
+    const folderName = syntax.getName(folder);
+    const singleName = format.toSingular(folderName);
+
+    const folderPath = syntax.getPath(folder);
+    const filePath   = `${folderPath}/class-${singleName}.php`;
+    const template   = postType.postInterface.template(folder);
+    
+    file.create(filePath, template, open);
+  }
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create PostType Setup File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createPostTypeSetupFile = ( folder, open = false ) => {
+    const folderPath = syntax.getPath(folder);
+    const filePath   = `${folderPath}/class-setup.php`;
+    const template   = postType.setup.template(folder);
+    
+    file.create(filePath, template, open);
+  }
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Post Type Files
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createPostTypeFiles = (folder, templateName) => {
+    const folderName = syntax.getName(folder);
+    const singleName = format.toSingular(folderName);
+
+    const template = postType[templateName];
+
+    let files = {
+      'functions'     : 'functions.php',
+      'postInterface' : `class-${singleName}.php`,
+      'templateBlocks': 'template-blocks.php',
+      'templateData'  : 'template-data.php',
+      'setup'         : 'class-setup.php'
+    }
+
+    for (let method in files) {
+      const folder = syntax.getPath(folder);
+      const file   = files[method];
+
+      const filePath = `${folder}/${file}`;
+      file.create(filePath, template[method](folder), method === 'setup');
+    }
+  }
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Taxonomy Functions File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createTaxonomyFunctionsFile = ( folder, open = false ) => {
+    const folderPath = syntax.getPath(folder);
+    const filePath   = `${folderPath}/functions.php`;
+    const template   = taxonomy.functions.template(folder);
+    
+    file.create(filePath, template, open);
+  }
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Taxonomy Interface File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createTaxonomyInterfaceFile = ( folder, open = false ) => {
+    const folderName = syntax.getName(folder);
+    const singleName = format.toSingular(folderName);
+
+    const folderPath = syntax.getPath(folder);
+    const filePath   = `${folderPath}/class-${singleName}.php`;
+    const template   = taxonomy.taxInterface.template(folder);
+    
+    file.create(filePath, template, open);
+  }
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Taxonomy Setup File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createTaxonomySetupFile = ( folder, open = false ) => {
+    const folderPath = syntax.getPath(folder);
+    const filePath   = `${folderPath}/class-setup.php`;
+    const template   = taxonomy.setup.template(folder);
+    
+    file.create(filePath, template, open);
+  }
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Taxonomy Files
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createTaxonomyFiles = (folder, templateName) => {
+    const folderName = syntax.getName(folder);
+    const singleName = format.toSingular(folderName);
+
+    const template = taxonomy[templateName];
+
+    let files = {
+      'functions'     : 'functions.php',
+      'postInterface' : `class-${singleName}.php`,
+      'templateBlocks': 'template-blocks.php',
+      'templateData'  : 'template-data.php',
+      'setup'         : 'class-setup.php'
+    }
+
+    for (let method in files) {
+      const folder = syntax.getPath(folder);
+      const file   = files[method];
+
+      const filePath = `${folder}/${file}`;
+      file.create(filePath, template[method](folder), method === 'setup');
+    }
+  }
+
   
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
   // ✅ Generate Component Files
@@ -202,10 +385,80 @@ function activate(context) {
 
 
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Generate Class Files
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  let generateModuleFile = vscode.commands.registerCommand('atomic-component-suite.generateModuleFile', (folder) => {
+    console.log( folder );
+    createModuleFile(folder, true);
+  });
+
+  let generateTemplateBlocksFile = vscode.commands.registerCommand('atomic-component-suite.generateTemplateBlocksFile', (folder) => {
+    createTemplateBlocksFile(folder, true);
+  });
+
+  let generateTemplateDataFile = vscode.commands.registerCommand('atomic-component-suite.generateTemplateDataFile', (folder) => {
+    createTemplateDataFile(folder, true);
+  });
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Generate Post Type Files
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  let generatePostTypeFiles = vscode.commands.registerCommand('atomic-component-suite.generatePostTypeFiles', (folder) => {
+    createModuleFile(folder);
+    createPostTypeFunctionsFile(folder);
+    createPostTypeInterfaceFile(folder);
+    createTemplateBlocksFile(folder);
+    createTemplateDataFile(folder);
+    createPostTypeSetupFile(folder, true);
+  });
+
+  let generatePostTypeFunctionsFile = vscode.commands.registerCommand('atomic-component-suite.generatePostTypeFunctionsFile', (folder) => {
+    createPostTypeFunctionsFile(folder, true);
+  });
+
+  let generatePostTypeInterfaceFile = vscode.commands.registerCommand('atomic-component-suite.generatePostTypeInterfaceFile', (folder) => {
+    createPostTypeInterfaceFile(folder, true);
+  });
+
+  let generatePostTypeSetupFile = vscode.commands.registerCommand('atomic-component-suite.generatePostTypeSetupFile', (folder) => {
+    createPostTypeSetupFile(folder, true);
+  });
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Generate Taxonomy Files
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  let generateTaxonomyFiles = vscode.commands.registerCommand('atomic-component-suite.generateTaxonomyFiles', (folder) => {
+    createModuleFile(folder);
+    createTaxonomyFunctionsFile(folder);
+    createTaxonomyInterfaceFile(folder);
+    createTemplateBlocksFile(folder);
+    createTemplateDataFile(folder);
+    createTaxonomySetupFile(folder, true);
+  });
+
+  let generateTaxonomyFunctionsFile = vscode.commands.registerCommand('atomic-component-suite.generateTaxonomyFunctionsFile', (folder) => {
+    createTaxonomyFunctionsFile(folder, true);
+  });
+
+  let generateTaxonomyInterfaceFile = vscode.commands.registerCommand('atomic-component-suite.generateTaxonomyInterfaceFile', (folder) => {
+    createTaxonomyInterfaceFile(folder, true);
+  });
+
+  let generateTaxonomySetupFile = vscode.commands.registerCommand('atomic-component-suite.generateTaxonomySetupFile', (folder) => {
+    createTaxonomySetupFile(folder, true);
+  });
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
   // ✅ Subscribe Commands
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  context.subscriptions.push(generateFiles, generatePartFile, generateStoriesFile, generateStyleFile, generateJavascriptFile, generateBlockFiles,generateCarouselTemplate,generateClickableTemplate,generateFeaturedTemplate,generateHeroTemplate,generatePluralTemplate,generateSectionTemplate);
+  context.subscriptions.push(generateFiles, generatePartFile, generateStoriesFile, generateStyleFile, generateJavascriptFile, generateBlockFiles,generateCarouselTemplate,generateClickableTemplate,generateFeaturedTemplate,generateHeroTemplate,generatePluralTemplate,generateSectionTemplate, generatePostTypeFunctionsFile,generatePostTypeInterfaceFile,generateTemplateBlocksFile,generateTemplateDataFile,generatePostTypeSetupFile,generatePostTypeFiles,generateTaxonomyFunctionsFile,generateTaxonomyInterfaceFile,generateTaxonomySetupFile,generateTaxonomyFiles, generateModuleFile);
 }
 
 module.exports = {

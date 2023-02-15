@@ -10,7 +10,7 @@ const toCapsAndSnake = function (string) {
   return toCapsAndSpaces(string).replace(/ /g, "_");
 }
 
-const lowAndSnake = function (string) {
+const toLowAndSnake = function (string) {
   return toLowAndSpaces(string).replace(/ /g, "_");
 }
 
@@ -27,12 +27,16 @@ const toFirstLetter = function (string) {
 }
 
 const toSingular = function (string) {
-  if (string.endsWith('s')) {
-    return string.slice(0, -1);
-  } else if (string.endsWith('ies')) {
+  if (string.endsWith('ies')) {
     return string.slice(0, -3) + 'y';
   } else if (string.endsWith('es')) {
-    return string.slice(0, -2);
+    if (string.slice(-4, -3) === 'e') {
+      return string.slice(0, -1);
+    } else {
+      return string.slice(0, -2);
+    }
+  } else if (string.endsWith('s')) {
+    return string.slice(0, -1);
   } else {
     return string;
   }
@@ -42,7 +46,7 @@ module.exports = {
   toCapsAndSpaces,
   toLowAndSpaces,
   toCapsAndSnake,
-  lowAndSnake,
+  toLowAndSnake,
   toCapsAndCamel,
   toLowAndCamel,
   toFirstLetter,

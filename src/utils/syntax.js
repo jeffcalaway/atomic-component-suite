@@ -8,8 +8,12 @@ const getName = function (file) {
   return path.basename(getPath(file));
 }
 
+const getDirPath = function (file) {
+  return path.dirname(getPath(file))
+}
+
 const getDirName = function (file) {
-  return path.basename(path.dirname(getPath(file)));
+  return path.basename(getDirPath(file));
 }
 
 const getFile = function ( file, ext ) {
@@ -22,6 +26,7 @@ const getFile = function ( file, ext ) {
 module.exports = {
   getPath,
   getName,
+  getDirPath,
   getDirName,
   getFile
 }

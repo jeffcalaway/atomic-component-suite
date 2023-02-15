@@ -61,7 +61,7 @@ const javascript = function (file) {
 
   const className = `${dirLetter}-${folderName}`;
   const ClassName = format.toCapsAndCamel(folderName);
-  const fName     = format.lowAndSnake(folderName);
+  const fName     = format.toLowAndSnake(folderName);
 
   return `jQuery($ => {
     class ${ClassName} {
