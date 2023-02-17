@@ -44,7 +44,7 @@
 		"commands": [
 			{
 				"command": "atomic-component-suite.generateComponentFiles",
-				"title": "Default Files"
+				"title": "New Component"
 			},
 			{
 				"command": "atomic-component-suite.generateComponentPartFile",
@@ -141,11 +141,15 @@
 				"label": "Generate"
 			},
 			{
-				"id": "atomic-component-suite.generate.cfiles",
-				"label": "Component Files"
+				"id": "atomic-component-suite.generate.cmenu",
+				"label": "Component"
 			},
 			{
-				"id": "atomic-component-suite.generate.templates",
+				"id": "atomic-component-suite.generate.cmenu.files",
+				"label": "Files"
+			},
+			{
+				"id": "atomic-component-suite.generate.cmenu.templates",
 				"label": "Templates"
 			},
 			{
@@ -168,7 +172,7 @@
 		"menus": {
 			"atomic-component-suite.generate": [
 				{
-					"submenu": "atomic-component-suite.generate.cfiles",
+					"submenu": "atomic-component-suite.generate.cmenu",
 					"group": "2_workspace@1",
 					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
 				},
@@ -181,46 +185,53 @@
 					"submenu": "atomic-component-suite.generate.taxonomymenu",
 					"group": "2_workspace@2",
 					"when": "explorerResourceIsFolder && resourcePath =~ /includes\\/.+/"
-				},
-				{
-					"command": "atomic-component-suite.generateComponentPartFile",
-					"group": "2_workspace@2",
-					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
-				},
-				{
-					"command": "atomic-component-suite.generateComponentStoriesFile",
-					"group": "2_workspace@3",
-					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
-				},
-				{
-					"command": "atomic-component-suite.generateComponentStyleFile",
-					"group": "2_workspace@4",
-					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
-				},
-				{
-					"command": "atomic-component-suite.generateComponentJavascriptFile",
-					"group": "2_workspace@5",
-					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
-				},
-				{
-					"command": "atomic-component-suite.generateComponentBlockFiles",
-					"group": "2_workspace@6",
-					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/organisms\\//"
 				}
 			],
-			"atomic-component-suite.generate.cfiles": [
+			"atomic-component-suite.generate.cmenu": [
 				{
 					"command": "atomic-component-suite.generateComponentFiles",
 					"group": "2_workspace@1",
 					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
 				},
 				{
-					"submenu": "atomic-component-suite.generate.templates",
+					"submenu": "atomic-component-suite.generate.cmenu.files",
 					"group": "2_workspace@2",
+					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
+				},
+				{
+					"submenu": "atomic-component-suite.generate.cmenu.templates",
+					"group": "2_workspace@3",
 					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
 				}
 			],
-			"atomic-component-suite.generate.templates": [
+			"atomic-component-suite.generate.cmenu.files": [
+				{
+					"command": "atomic-component-suite.generateComponentPartFile",
+					"group": "2_workspace@1",
+					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
+				},
+				{
+					"command": "atomic-component-suite.generateComponentStoriesFile",
+					"group": "2_workspace@2",
+					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
+				},
+				{
+					"command": "atomic-component-suite.generateComponentStyleFile",
+					"group": "2_workspace@3",
+					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
+				},
+				{
+					"command": "atomic-component-suite.generateComponentJavascriptFile",
+					"group": "2_workspace@4",
+					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
+				},
+				{
+					"command": "atomic-component-suite.generateComponentBlockFiles",
+					"group": "2_workspace@5",
+					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/organisms\\//"
+				}
+			],
+			"atomic-component-suite.generate.cmenu.templates": [
 				{
 					"command": "atomic-component-suite.generateButtonTemplate",
 					"group": "2_workspace@1",
