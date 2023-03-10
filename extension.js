@@ -359,12 +359,12 @@ function activate(context) {
   // ✅ Generate Template
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  let generateCarouselTemplate = vscode.commands.registerCommand('atomic-component-suite.generateCarouselTemplate', (folder) => {
-    createTemplateFiles(folder, 'carousel');
+  let generateSliderTemplate = vscode.commands.registerCommand('atomic-component-suite.generateSliderTemplate', (folder) => {
+    createTemplateFiles(folder, 'slider');
   });
 
-  let generateClickableTemplate = vscode.commands.registerCommand('atomic-component-suite.generateClickableTemplate', (folder) => {
-    createTemplateFiles(folder, 'clickable');
+  let generateButtonTemplate = vscode.commands.registerCommand('atomic-component-suite.generateButtonTemplate', (folder) => {
+    createTemplateFiles(folder, 'button');
   });
 
   let generateFeaturedTemplate = vscode.commands.registerCommand('atomic-component-suite.generateFeaturedTemplate', (folder) => {
@@ -389,7 +389,6 @@ function activate(context) {
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
   let generateModuleFile = vscode.commands.registerCommand('atomic-component-suite.generateModuleFile', (folder) => {
-    console.log( folder );
     createModuleFile(folder, true);
   });
 
@@ -458,7 +457,7 @@ function activate(context) {
   // ✅ Subscribe Commands
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  context.subscriptions.push(generateFiles, generatePartFile, generateStoriesFile, generateStyleFile, generateJavascriptFile, generateBlockFiles,generateCarouselTemplate,generateClickableTemplate,generateFeaturedTemplate,generateHeroTemplate,generatePluralTemplate,generateSectionTemplate, generatePostTypeFunctionsFile,generatePostTypeInterfaceFile,generateTemplateBlocksFile,generateTemplateDataFile,generatePostTypeSetupFile,generatePostTypeFiles,generateTaxonomyFunctionsFile,generateTaxonomyInterfaceFile,generateTaxonomySetupFile,generateTaxonomyFiles, generateModuleFile);
+  context.subscriptions.push(generateFiles, generatePartFile, generateStoriesFile, generateStyleFile, generateJavascriptFile, generateBlockFiles,generateSliderTemplate,generateButtonTemplate,generateFeaturedTemplate,generateHeroTemplate,generatePluralTemplate,generateSectionTemplate, generatePostTypeFunctionsFile,generatePostTypeInterfaceFile,generateTemplateBlocksFile,generateTemplateDataFile,generatePostTypeSetupFile,generatePostTypeFiles,generateTaxonomyFunctionsFile,generateTaxonomyInterfaceFile,generateTaxonomySetupFile,generateTaxonomyFiles, generateModuleFile);
 }
 
 module.exports = {
