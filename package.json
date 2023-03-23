@@ -1,7 +1,7 @@
 {
-	"name": "atomic-component-suite",
+	"name": "atomic-component-generator",
 	"publisher": "jeffcalaway",
-	"displayName": "Atomic Component Suite",
+	"displayName": "Atomic Component Generator",
 	"description": "This extension is intended for building Useful Framework components for WordPress. It will not work otherwise.",
 	"repository": {
 		"type": "git",

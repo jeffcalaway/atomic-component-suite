@@ -37,6 +37,8 @@ const part = function (file) {
         'is_disabled' => 'disabled'
     ]);
 
+    extract($props->to_array());
+
     $class = $props->class([
         '${className}',
         '${className}--disabled' => $is_disabled,
