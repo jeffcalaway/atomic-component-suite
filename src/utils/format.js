@@ -29,13 +29,15 @@ const toFirstLetter = function (string) {
 const toSingular = function (string) {
   if (string.endsWith('ies')) {
     return string.slice(0, -3) + 'y';
-  } else if (string.endsWith('es')) {
-    if (string.slice(-4, -3) === 'e') {
-      return string.slice(0, -1);
-    } else {
-      return string.slice(0, -2);
-    }
-  } else if (string.endsWith('s')) {
+  }
+  // else if (string.endsWith('es')) {
+  //   if (string.slice(-4, -3) === 'e') {
+  //     return string.slice(0, -1);
+  //   } else {
+  //     return string.slice(0, -2);
+  //   }
+  // }
+  else if (string.endsWith('s')) {
     return string.slice(0, -1);
   } else {
     return string;
