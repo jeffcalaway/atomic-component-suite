@@ -161,6 +161,45 @@ function activate(context) {
     file.create(filePath, template, open);
   }
 
+  
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Class Setup File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createClassSetupFile = ( folder, open = false ) => {
+    const folderPath = syntax.getPath(folder);
+    const filePath   = `${folderPath}/setup.php`;
+    const template   = classes.setup.template(folder);
+    
+    file.create(filePath, template, open);
+  }
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Class Interface File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createClassInterfaceFile = ( folder, open = false ) => {
+    const folderPath = syntax.getPath(folder);
+    const filePath   = `${folderPath}/interface.php`;
+    const template   = classes.interface.template(folder);
+    
+    file.create(filePath, template, open);
+  }
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Class Functions File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createClassFunctionsFile = ( folder, open = false ) => {
+    const folderPath = syntax.getPath(folder);
+    const filePath   = `${folderPath}/functions.php`;
+    const template   = classes.functions.template(folder);
+    
+    file.create(filePath, template, open);
+  }
+
 
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
   // ✅ Create PostType Functions File
@@ -400,6 +439,24 @@ function activate(context) {
     createTemplateDataFile(folder, true);
   });
 
+  let generateClassInterfaceFile = vscode.commands.registerCommand('atomic-component-suite.generateClassInterface', (folder) => {
+    createClassInterfaceFile(folder, true);
+  });
+
+  let generateClassFunctionsFile = vscode.commands.registerCommand('atomic-component-suite.generateClassFunctions', (folder) => {
+    createClassFunctionsFile(folder, true);
+  });
+
+  let generateClassSetupFile = vscode.commands.registerCommand('atomic-component-suite.generateClassSetup', (folder) => {
+    createClassSetupFile(folder, true);
+  });
+
+  let generateClassFiles = vscode.commands.registerCommand('atomic-component-suite.generateClassFiles', (folder) => {
+    generateModuleFile(folder);
+    generateClassInterfaceFile(folder);
+    generateClassFunctionsFile(folder, true);
+  });
+
 
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
   // ✅ Generate Post Type Files
@@ -457,7 +514,7 @@ function activate(context) {
   // ✅ Subscribe Commands
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  context.subscriptions.push(generateFiles, generatePartFile, generateStoriesFile, generateStyleFile, generateJavascriptFile, generateBlockFiles,generateSliderTemplate,generateButtonTemplate,generateFeaturedTemplate,generateHeroTemplate,generatePluralTemplate,generateSectionTemplate, generatePostTypeFunctionsFile,generatePostTypeInterfaceFile,generateTemplateBlocksFile,generateTemplateDataFile,generatePostTypeSetupFile,generatePostTypeFiles,generateTaxonomyFunctionsFile,generateTaxonomyInterfaceFile,generateTaxonomySetupFile,generateTaxonomyFiles, generateModuleFile);
+  context.subscriptions.push(generateFiles, generatePartFile, generateStoriesFile, generateStyleFile, generateJavascriptFile, generateBlockFiles,generateSliderTemplate,generateButtonTemplate,generateFeaturedTemplate,generateHeroTemplate,generatePluralTemplate,generateSectionTemplate, generatePostTypeFunctionsFile,generatePostTypeInterfaceFile,generateTemplateBlocksFile,generateTemplateDataFile,generatePostTypeSetupFile,generatePostTypeFiles,generateTaxonomyFunctionsFile,generateTaxonomyInterfaceFile,generateTaxonomySetupFile,generateTaxonomyFiles, generateModuleFile, generateClassInterfaceFile, generateClassFunctionsFile, generateClassSetupFile, generateClassFiles);
 }
 
 module.exports = {

@@ -27,6 +27,10 @@
 		"onCommand:atomic-component-suite.generateHeroTemplate",
 		"onCommand:atomic-component-suite.generatePluralTemplate",
 		"onCommand:atomic-component-suite.generateSectionTemplate",
+		"onCommand:atomic-component-suite.generateClassFiles",
+		"onCommand:atomic-component-suite.generateClassFunctionsFile",
+		"onCommand:atomic-component-suite.generateClassInterfaceFile",
+		"onCommand:atomic-component-suite.generateClassSetupFile",
 		"onCommand:atomic-component-suite.generatePostTypeFiles",
 		"onCommand:atomic-component-suite.generatePostTypeFunctionsFile",
 		"onCommand:atomic-component-suite.generatePostTypeInterfaceFile",
@@ -133,6 +137,22 @@
 			{
 				"command": "atomic-component-suite.generateTaxonomySetupFile",
 				"title": "Setup"
+			},
+			{
+				"command": "atomic-component-suite.generateClassFiles",
+				"title": "New Class"
+			},
+			{
+				"command": "atomic-component-suite.generateClassFunctionsFile",
+				"title": "Functions"
+			},
+			{
+				"command": "atomic-component-suite.generateClassInterfaceFile",
+				"title": "Interface"
+			},
+			{
+				"command": "atomic-component-suite.generateClassSetupFile",
+				"title": "Setup"
 			}
 		],
 		"submenus": [
@@ -151,6 +171,14 @@
 			{
 				"id": "atomic-component-suite.generate.cmenu.templates",
 				"label": "Templates"
+			},
+			{
+				"id": "atomic-component-suite.generate.classmenu",
+				"label": "Class"
+			},
+			{
+				"id": "atomic-component-suite.generate.classmenu.files",
+				"label": "Files"
 			},
 			{
 				"id": "atomic-component-suite.generate.ptmenu",
@@ -175,6 +203,11 @@
 					"submenu": "atomic-component-suite.generate.cmenu",
 					"group": "2_workspace@1",
 					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
+				},
+				{
+					"submenu": "atomic-component-suite.generate.classmenu",
+					"group": "2_workspace@1",
+					"when": "explorerResourceIsFolder && resourcePath =~ /includes\\/.+/"
 				},
 				{
 					"submenu": "atomic-component-suite.generate.ptmenu",
@@ -261,6 +294,50 @@
 					"command": "atomic-component-suite.generateSliderTemplate",
 					"group": "2_workspace@6",
 					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(molecules|organisms)\\//"
+				}
+			],
+			"atomic-component-suite.generate.classmenu": [
+				{
+					"command": "atomic-component-suite.generateClassFiles",
+					"group": "2_workspace@1",
+					"when": "explorerResourceIsFolder && resourcePath =~ /includes/"
+				},
+				{
+					"submenu": "atomic-component-suite.generate.classmenu.files",
+					"group": "2_workspace@2",
+					"when": "explorerResourceIsFolder && resourcePath =~ /includes/"
+				}
+			],
+			"atomic-component-suite.generate.classmenu.files": [
+				{
+					"command": "atomic-component-suite.generateClassSetupFile",
+					"group": "2_workspace@1",
+					"when": "explorerResourceIsFolder && resourcePath =~ /includes/"
+				},
+				{
+					"command": "atomic-component-suite.generateClassInterfaceFile",
+					"group": "2_workspace@2",
+					"when": "explorerResourceIsFolder && resourcePath =~ /includes/"
+				},
+				{
+					"command": "atomic-component-suite.generateClassFunctionsFile",
+					"group": "2_workspace@3",
+					"when": "explorerResourceIsFolder && resourcePath =~ /includes/"
+				},
+				{
+					"command": "atomic-component-suite.generateTemplateBlocksFile",
+					"group": "2_workspace@4",
+					"when": "explorerResourceIsFolder && resourcePath =~ /includes/"
+				},
+				{
+					"command": "atomic-component-suite.generateTemplateDataFile",
+					"group": "2_workspace@5",
+					"when": "explorerResourceIsFolder && resourcePath =~ /includes/"
+				},
+				{
+					"command": "atomic-component-suite.generateModuleFile",
+					"group": "2_workspace@6",
+					"when": "explorerResourceIsFolder && resourcePath =~ /includes/"
 				}
 			],
 			"atomic-component-suite.generate.ptmenu": [
@@ -404,14 +481,6 @@
 					"when": "never"
 				},
 				{
-					"command": "atomic-component-suite.generatePostTypeTemplateBlocksFile",
-					"when": "never"
-				},
-				{
-					"command": "atomic-component-suite.generatePostTypeTemplateDataFile",
-					"when": "never"
-				},
-				{
 					"command": "atomic-component-suite.generatePostTypeFunctionsFile",
 					"when": "never"
 				},
@@ -433,6 +502,22 @@
 				},
 				{
 					"command": "atomic-component-suite.generateTaxonomySetupFile",
+					"when": "never"
+				},
+				{
+					"command": "atomic-component-suite.generateClassFiles",
+					"when": "never"
+				},
+				{
+					"command": "atomic-component-suite.generateClassFunctionsFile",
+					"when": "never"
+				},
+				{
+					"command": "atomic-component-suite.generateClassInterfaceFile",
+					"when": "never"
+				},
+				{
+					"command": "atomic-component-suite.generateClassSetupFile",
 					"when": "never"
 				}
 			]
