@@ -31,6 +31,8 @@
 		"onCommand:atomic-component-suite.generateClassFunctionsFile",
 		"onCommand:atomic-component-suite.generateClassInterfaceFile",
 		"onCommand:atomic-component-suite.generateClassSetupFile",
+		"onCommand:atomic-component-suite.generateClassModuleFile",
+		"onCommand:atomic-component-suite.generateClassHooksFile",
 		"onCommand:atomic-component-suite.generatePostTypeFiles",
 		"onCommand:atomic-component-suite.generatePostTypeFunctionsFile",
 		"onCommand:atomic-component-suite.generatePostTypeInterfaceFile",
@@ -153,6 +155,14 @@
 			{
 				"command": "atomic-component-suite.generateClassSetupFile",
 				"title": "Setup"
+			},
+			{
+				"command": "atomic-component-suite.generateClassHooksFile",
+				"title": "Hooks"
+			},
+			{
+				"command": "atomic-component-suite.generateClassModuleFile",
+				"title": "Parent Module"
 			}
 		],
 		"submenus": [
@@ -335,7 +345,12 @@
 					"when": "explorerResourceIsFolder && resourcePath =~ /includes/"
 				},
 				{
-					"command": "atomic-component-suite.generateModuleFile",
+					"command": "atomic-component-suite.generateClassHooksFile",
+					"group": "2_workspace@6",
+					"when": "explorerResourceIsFolder && resourcePath =~ /includes/"
+				},
+				{
+					"command": "atomic-component-suite.generateClassModuleFile",
 					"group": "2_workspace@6",
 					"when": "explorerResourceIsFolder && resourcePath =~ /includes/"
 				}
@@ -518,6 +533,14 @@
 				},
 				{
 					"command": "atomic-component-suite.generateClassSetupFile",
+					"when": "never"
+				},
+				{
+					"command": "atomic-component-suite.generateClassHooksFile",
+					"when": "never"
+				},
+				{
+					"command": "atomic-component-suite.generateClassModuleFile",
 					"when": "never"
 				}
 			]

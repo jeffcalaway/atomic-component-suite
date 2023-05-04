@@ -202,6 +202,36 @@ function activate(context) {
 
 
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Class Module File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createClassModuleFile = ( folder, open = false ) => {
+    const pluralName = syntax.getName(folder);
+    const dirPath    = syntax.getDirPath(folder);
+    const filePath   = `${dirPath}/class-${pluralName}.php`;
+    const template   = classes.parentModuleEmpty.template(folder);
+
+
+    if (!fs.existsSync(filePath)) {
+      file.create(filePath, template, open);
+    }
+  }
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Class Hooks File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createClassHooksFile = ( folder, open = false ) => {
+    const folderPath = syntax.getPath(folder);
+    const filePath   = `${folderPath}/hooks.php`;
+    const template   = classes.hooks.template(folder);
+    
+    file.create(filePath, template, open);
+  }
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
   // ✅ Create PostType Functions File
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
@@ -451,10 +481,18 @@ function activate(context) {
     createClassSetupFile(folder, true);
   });
 
+  let generateClassModuleFile = vscode.commands.registerCommand('atomic-component-suite.generateClassModule', (folder) => {
+    createClassModuleFile(folder, true);
+  });
+
+  let generateClassHooksFile = vscode.commands.registerCommand('atomic-component-suite.generateClassHooks', (folder) => {
+    createClassHooksFile(folder, true);
+  });
+
   let generateClassFiles = vscode.commands.registerCommand('atomic-component-suite.generateClassFiles', (folder) => {
-    generateModuleFile(folder);
-    generateClassInterfaceFile(folder);
-    generateClassFunctionsFile(folder, true);
+    createClassModuleFile(folder);
+    createClassFunctionsFile(folder);
+    createClassInterfaceFile(folder, true);
   });
 
 
@@ -514,7 +552,7 @@ function activate(context) {
   // ✅ Subscribe Commands
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  context.subscriptions.push(generateFiles, generatePartFile, generateStoriesFile, generateStyleFile, generateJavascriptFile, generateBlockFiles,generateSliderTemplate,generateButtonTemplate,generateFeaturedTemplate,generateHeroTemplate,generatePluralTemplate,generateSectionTemplate, generatePostTypeFunctionsFile,generatePostTypeInterfaceFile,generateTemplateBlocksFile,generateTemplateDataFile,generatePostTypeSetupFile,generatePostTypeFiles,generateTaxonomyFunctionsFile,generateTaxonomyInterfaceFile,generateTaxonomySetupFile,generateTaxonomyFiles, generateModuleFile, generateClassInterfaceFile, generateClassFunctionsFile, generateClassSetupFile, generateClassFiles);
+  context.subscriptions.push(generateFiles, generatePartFile, generateStoriesFile, generateStyleFile, generateJavascriptFile, generateBlockFiles,generateSliderTemplate,generateButtonTemplate,generateFeaturedTemplate,generateHeroTemplate,generatePluralTemplate,generateSectionTemplate, generatePostTypeFunctionsFile,generatePostTypeInterfaceFile,generateTemplateBlocksFile,generateTemplateDataFile,generatePostTypeSetupFile,generatePostTypeFiles,generateTaxonomyFunctionsFile,generateTaxonomyInterfaceFile,generateTaxonomySetupFile,generateTaxonomyFiles, generateModuleFile, generateClassInterfaceFile, generateClassFunctionsFile, generateClassSetupFile, generateClassHooksFile, generateClassModuleFile, generateClassFiles);
 }
 
 module.exports = {
