@@ -43,7 +43,9 @@
 		"onCommand:atomic-component-suite.generateTaxonomyFiles",
 		"onCommand:atomic-component-suite.generateTaxonomyFunctionsFile",
 		"onCommand:atomic-component-suite.generateTaxonomyInterfaceFile",
-		"onCommand:atomic-component-suite.generateTaxonomySetupFile"
+		"onCommand:atomic-component-suite.generateTaxonomySetupFile",
+		"onCommand:atomic-component-suite.generateReactComponentFiles",
+		"onCommand:atomic-component-suite.generateTypedReactComponentFiles"
 	],
 	"main": "./extension.js",
 	"contributes": {
@@ -163,6 +165,14 @@
 			{
 				"command": "atomic-component-suite.generateClassModuleFile",
 				"title": "Parent Module"
+			},
+			{
+				"command": "atomic-component-suite.generateReactComponentFiles",
+				"title": "Javascript"
+			},
+			{
+				"command": "atomic-component-suite.generateTypedReactComponentFiles",
+				"title": "Typescript"
 			}
 		],
 		"submenus": [
@@ -205,6 +215,14 @@
 			{
 				"id": "atomic-component-suite.generate.taxonomymenu.files",
 				"label": "Files"
+			},
+			{
+				"id": "atomic-component-suite.generateReact",
+				"label": "Generate"
+			},
+			{
+				"id": "atomic-component-suite.generateReact.rcmenu",
+				"label": "Component"
 			}
 		],
 		"menus": {
@@ -443,9 +461,33 @@
 					"when": "explorerResourceIsFolder && resourcePath =~ /includes/"
 				}
 			],
+			"atomic-component-suite.generateReact": [
+				{
+					"submenu": "atomic-component-suite.generateReact.rcmenu",
+					"group": "2_workspace@1",
+					"when": "explorerResourceIsFolder && resourcePath =~ /components\\/(atoms|molecules|organisms|shared)\\//"
+				}
+			],
+			"atomic-component-suite.generateReact.rcmenu": [
+				{
+					"command": "atomic-component-suite.generateReactComponentFiles",
+					"group": "2_workspace@1",
+					"when": "explorerResourceIsFolder && resourcePath =~ /components\\/(atoms|molecules|organisms|shared)\\//"
+				},
+				{
+					"command": "atomic-component-suite.generateTypedReactComponentFiles",
+					"group": "2_workspace@2",
+					"when": "explorerResourceIsFolder && resourcePath =~ /components\\/(atoms|molecules|organisms|shared)\\//"
+				}
+			],
 			"explorer/context": [
 				{
 					"submenu": "atomic-component-suite.generate",
+					"group": "2_workspace@7",
+					"when": "explorerResourceIsFolder"
+				},
+				{
+					"submenu": "atomic-component-suite.generateReact",
 					"group": "2_workspace@7",
 					"when": "explorerResourceIsFolder"
 				}
@@ -541,6 +583,14 @@
 				},
 				{
 					"command": "atomic-component-suite.generateClassModuleFile",
+					"when": "never"
+				},
+				{
+					"command": "atomic-component-suite.generateReactComponentFiles",
+					"when": "never"
+				},
+				{
+					"command": "atomic-component-suite.generateTypedReactComponentFiles",
 					"when": "never"
 				}
 			]

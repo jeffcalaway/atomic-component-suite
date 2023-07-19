@@ -22,6 +22,11 @@ const toLowAndCamel = function (string) {
   return toLowAndSpaces(string).split(" ").join("");
 }
 
+const toKebab = function (string) {
+  let noUnderscores = string.replace(/_/g, '');
+  return noUnderscores.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+}
+
 const toFirstLetter = function (string) {
   return string.charAt(0);
 }
@@ -51,6 +56,7 @@ module.exports = {
   toLowAndSnake,
   toCapsAndCamel,
   toLowAndCamel,
+  toKebab,
   toFirstLetter,
   toSingular
 }
