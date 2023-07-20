@@ -8,24 +8,22 @@ const template = function (file) {
   const dirName = getDirName(file);
   const dirTitle = format.toCapsAndSpaces(dirName);
 
-  return `import type { Meta, StoryObj } from '@storybook/react';
+  return `import React from 'react'
+import ${folderClass}, { ${folderClass}Props } from './${folderClass}';
 
-import ${folderClass} from './${folderClass}';
-
-const meta: Meta<typeof ${folderClass}> = {
+export default {
   title: '${dirTitle}/${folderTitle}',
   component: ${folderClass},
-  tags: ['autodocs']
-};
-
-export default meta;
-type Story = StoryObj<typeof ${folderClass}>;
-
-export const Default: Story = {
+  tags: ['autodocs'],
   args: {
     
-  },
-};`
+  }
+}
+
+const Template = (args: ${folderClass}Props) => <${folderClass} {...args} />
+
+export const Default = Template.bind({})
+`
 }
 
 module.exports = {
