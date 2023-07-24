@@ -14,7 +14,7 @@ const template = function (file) {
 
   return `import React from 'react';
 import cn from 'classnames';
-import basePropsfrom '@interfaces/baseProps';
+import baseProps from '@interfaces/baseProps';
 
 export interface ${propConst} extends baseProps {
   //text?: string
