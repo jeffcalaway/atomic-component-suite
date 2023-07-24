@@ -8,8 +8,10 @@ const template = function (file) {
   const dirName = getDirName(file);
   const dirTitle = format.toCapsAndSpaces(dirName);
 
+  const propConst = folderClass.charAt(0).toLowerCase() + folderClass.slice(1) + 'Props';
+
   return `import React from 'react'
-import ${folderClass}, { ${folderClass}Props } from './${folderClass}';
+import ${folderClass}, { ${propConst} } from './${folderClass}';
 
 export default {
   title: '${dirTitle}/${folderTitle}',
@@ -20,7 +22,7 @@ export default {
   }
 }
 
-const Template = (args: ${folderClass}Props) => <${folderClass} {...args} />
+const Template = (args: ${propConst}) => <${folderClass} {...args} />
 
 export const Default = Template.bind({})
 `

@@ -8,18 +8,23 @@ const template = function (file) {
   const dirName = getDirName(file);
   const dirLetter = format.toFirstLetter(dirName);
 
+  const propConst = folderClass.charAt(0).toLowerCase() + folderClass.slice(1) + 'Props';
+
   const className = `${dirLetter}-${folderKebab}`;
 
   return `import React from 'react';
 import cn from 'classnames';
-import { BaseComponentProps } from '@components/shared/BaseComponent';
+import { baseProps } from '@interfaces/baseProps';
 
-export interface ${folderClass}Props extends BaseComponentProps {
+export interface ${propConst} extends baseProps {
   //text?: string
 }
 
-const ${folderClass} = (props: ${folderClass}Props) => {
-  const { className, ...rest } = props;
+const ${folderClass} = (props: ${propConst}) => {
+  const {
+    className,
+    ...rest
+  } = props;
 
   const classBase = '${className}';
   const classes   = cn(classBase, className);
