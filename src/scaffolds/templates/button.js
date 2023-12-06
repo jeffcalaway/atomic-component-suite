@@ -14,6 +14,7 @@ const part = function (file) {
         'text',
         'url',
         'target',
+        'rel',
         'aria_label',
         'aria_controls',
         'type',
@@ -31,6 +32,7 @@ const part = function (file) {
     $props->set_attributes([
         'id',
         'target',
+        'rel',
         'aria_label',
         'aria_controls',
         'name',
@@ -38,6 +40,18 @@ const part = function (file) {
     ]);
 
     extract($props->to_array());
+
+    if ($target === '_blank') {
+        $rel      = 'noopener noreferrer';
+        $rel_attr = attr('rel', 'noopener noreferrer');
+    
+        if ($aria_label) {
+            $aria_label .= ' (opens in a new tab)';
+        } else {
+            $aria_label = $text . ' (opens in new tab)';
+        }
+        $aria_label_attr = attr('aria-label', $aria_label);
+    }
 
     $class = $props->class([
         '${className}',
@@ -63,6 +77,7 @@ const part = function (file) {
             class="<?php echo $class; ?>"
             href="<?php echo $url; ?>"
             <?php echo $target_attr; ?>
+            <?php echo $rel_attr; ?>
             <?php echo $aria_label_attr; ?>
         ><?php echo $content;?></a>
 
