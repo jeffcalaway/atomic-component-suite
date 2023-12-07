@@ -42,9 +42,6 @@ const part = function (file) {
     extract($props->to_array());
 
     if ($target === '_blank') {
-        $rel      = 'noopener noreferrer';
-        $rel_attr = attr('rel', 'noopener noreferrer');
-    
         if ($aria_label) {
             $aria_label .= ' (opens in a new tab)';
         } else {
