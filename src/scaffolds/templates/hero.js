@@ -24,16 +24,14 @@ const part = function (file) {
     ]);
 ?>
 
-<?php if ( $items ) : ?>
-    <header
-        <?php echo $id_attr; ?>
-        class="<?php echo $class; ?>"
-    >
-        <div class="${className}__container u-container">
-            
-        </div>
-    </header>
-<?php endif; ?>`;
+<header
+    <?php echo $id_attr; ?>
+    class="<?php echo $class; ?>"
+>
+    <div class="${className}__container u-container">
+        
+    </div>
+</header>`;
 }
 
 const style      = false;
