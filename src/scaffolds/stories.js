@@ -3,7 +3,7 @@ const { getName, getDirName } = require('../utils/syntax');
 
 const template = function (file) {
   const folderName  = getName(file);
-  const folderTitle = format.toCapsAndSpaces(folderName);
+  const folderTitle = format.toCapsAndSpaces(folderName).replace(/cta/gi, 'CTA');
   const folderClass = format.toCapsAndSnake(folderName);
   const dirName     = getDirName(file);
   const dirTitle    = format.toCapsAndSpaces(dirName);
