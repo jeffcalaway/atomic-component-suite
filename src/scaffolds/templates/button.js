@@ -55,8 +55,7 @@ const part = function (file) {
     ]);
 
     extract($props->to_array());
-
-<<<<<<< HEAD
+    
     if (boolval($url)) {
         $aria_label      = set_target_aria_label($target, $aria_label ?: $text);
         $aria_label_attr = attr('aria-label', $aria_label);
@@ -74,15 +73,6 @@ const part = function (file) {
         case "array":
             $data_attrs = array_map('get_data_attr', array_keys($data), array_values($data));
             break;
-=======
-    if ($target === '_blank') {
-        if ($aria_label) {
-            $aria_label .= ' (opens in a new tab)';
-        } else {
-            $aria_label = $text . ' (opens in new tab)';
-        }
-        $aria_label_attr = attr('aria-label', $aria_label);
->>>>>>> 1580028ea71bd0c52fa2a16229df525a05980475
     }
 
     $class = $props->class([
