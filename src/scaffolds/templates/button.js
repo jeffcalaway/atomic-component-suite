@@ -24,6 +24,7 @@ const part = function (file) {
         'name',
         'role',
         'rel',
+        'data',
         'is_disabled',
         'is_download',
         'is_inverted',
@@ -55,7 +56,7 @@ const part = function (file) {
     ]);
 
     extract($props->to_array());
-    
+
     if (boolval($url)) {
         $aria_label      = set_target_aria_label($target, $aria_label ?: $text);
         $aria_label_attr = attr('aria-label', $aria_label);
