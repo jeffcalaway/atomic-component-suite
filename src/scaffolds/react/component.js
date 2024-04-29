@@ -10,22 +10,27 @@ const template = function (file) {
 
   const className = `${dirLetter}-${folderKebab}`;
 
-  return `import React from 'react'
-import cn from 'classnames'
+  return `import React from 'react';
+import PropTypes from 'prop-types';
+import clsx from 'clsx';
 
-const ${folderClass} = props => {
-  const {
-    className,
-    ...rest
-  } = props
+import './${folderClass}.scss
 
+const ${folderClass} = ({
+  className,
+  ...rest
+}) => {
   const classBase = '${className}';
-  const classes   = cn(classBase, className);
+  const classes   = clsx(classBase, className);
 
   return (
     <div className={classes} {...rest}>
     </div>
   )
+}
+
+${folderClass}.propTypes = {
+  className: PropTypes.string,
 }
 
 export default ${folderClass}

@@ -13,14 +13,13 @@ import ${folderClass} from './${folderClass}';
 
 export default {
   title: '${dirTitle}/${folderTitle}',
+  component: ${folderClass},
   args: {
     
   }
 }
 
-const Template = args => <${folderClass} {...args} />
-
-export const Default = Template.bind({})
+export const Default = {}
 `
 }
 
