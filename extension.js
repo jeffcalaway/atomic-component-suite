@@ -3,6 +3,7 @@ const file = require('./src/utils/file');
 const syntax = require('./src/utils/syntax');
 const format = require('./src/utils/format');
 const part = require('./src/scaffolds/part');
+const tBlock = require('./src/scaffolds/tBlock');
 const stories = require('./src/scaffolds/stories');
 const style = require('./src/scaffolds/style');
 const javascript = require('./src/scaffolds/javascript');
@@ -22,6 +23,18 @@ function activate(context) {
   const createComponentPartFile = (folder, open = false) => {
     const filePath = syntax.getFile(folder, '.php');
     const template = part.template(folder);
+
+    file.create(filePath, template, open);
+  }
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Create Block File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  const createComponentBlockFile = (folder, open = false) => {
+    const filePath = syntax.getFile(folder, '.php', syntax.getBuilderPath(folder));
+    const template = tBlock.template(folder);
 
     file.create(filePath, template, open);
   }
@@ -389,6 +402,15 @@ function activate(context) {
 
 
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+  // ✅ Generate Component Block File
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  let generateBlockFile = vscode.commands.registerCommand('atomic-component-suite.generateComponentBlockFile', (folder) => {
+    createComponentBlockFile(folder, true);
+  });
+
+
+  //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
   // ✅ Generate Component Stories File
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
@@ -633,7 +655,7 @@ function activate(context) {
   // ✅ Subscribe Commands
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  context.subscriptions.push(generateFiles, generatePartFile, generateStoriesFile, generateStyleFile, generateJavascriptFile, generateBlockFiles, generateSliderTemplate, generateButtonTemplate, generateFeaturedTemplate, generateHeroTemplate, generatePluralTemplate, generateSectionTemplate, generatePostTypeFunctionsFile, generatePostTypeInterfaceFile, generateTemplateBlocksFile, generateTemplateDataFile, generatePostTypeSetupFile, generatePostTypeFiles, generateTaxonomyFunctionsFile, generateTaxonomyInterfaceFile, generateTaxonomySetupFile, generateTaxonomyFiles, generateModuleFile, generateClassInterfaceFile, generateClassFunctionsFile, generateClassSetupFile, generateClassHooksFile, generateClassModuleFile, generateClassFiles, generateReactFiles, generateTypedReactFiles);
+  context.subscriptions.push(generateFiles, generatePartFile, generateBlockFile, generateStoriesFile, generateStyleFile, generateJavascriptFile, generateBlockFiles, generateSliderTemplate, generateButtonTemplate, generateFeaturedTemplate, generateHeroTemplate, generatePluralTemplate, generateSectionTemplate, generatePostTypeFunctionsFile, generatePostTypeInterfaceFile, generateTemplateBlocksFile, generateTemplateDataFile, generatePostTypeSetupFile, generatePostTypeFiles, generateTaxonomyFunctionsFile, generateTaxonomyInterfaceFile, generateTaxonomySetupFile, generateTaxonomyFiles, generateModuleFile, generateClassInterfaceFile, generateClassFunctionsFile, generateClassSetupFile, generateClassHooksFile, generateClassModuleFile, generateClassFiles, generateReactFiles, generateTypedReactFiles);
 }
 
 module.exports = {

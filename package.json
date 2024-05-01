@@ -7,7 +7,7 @@
 		"type": "git",
 		"url": "https://github.com/jeffcalaway/atomic-component-suite.git"
 	},
-	"version": "1.3.12",
+	"version": "1.4.0",
 	"engines": {
 		"vscode": "^1.74.0"
 	},
@@ -37,6 +37,7 @@
 		"onCommand:atomic-component-suite.generatePostTypeFunctionsFile",
 		"onCommand:atomic-component-suite.generatePostTypeInterfaceFile",
 		"onCommand:atomic-component-suite.generateModuleFile",
+		"onCommand:atomic-component-suite.generateTemplateBlockFile",
 		"onCommand:atomic-component-suite.generateTemplateBlocksFile",
 		"onCommand:atomic-component-suite.generateTemplateDataFile",
 		"onCommand:atomic-component-suite.generatePostTypeSetupFile",
@@ -57,6 +58,10 @@
 			{
 				"command": "atomic-component-suite.generateComponentPartFile",
 				"title": "Template Part"
+			},
+			{
+				"command": "atomic-component-suite.generateComponentBlockFile",
+				"title": "Template Block"
 			},
 			{
 				"command": "atomic-component-suite.generateComponentStoriesFile",
@@ -272,23 +277,28 @@
 					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
 				},
 				{
-					"command": "atomic-component-suite.generateComponentStoriesFile",
+					"command": "atomic-component-suite.generateComponentBlockFile",
 					"group": "2_workspace@2",
 					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
 				},
 				{
-					"command": "atomic-component-suite.generateComponentStyleFile",
+					"command": "atomic-component-suite.generateComponentStoriesFile",
 					"group": "2_workspace@3",
 					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
 				},
 				{
-					"command": "atomic-component-suite.generateComponentJavascriptFile",
+					"command": "atomic-component-suite.generateComponentStyleFile",
 					"group": "2_workspace@4",
 					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
 				},
 				{
-					"command": "atomic-component-suite.generateComponentBlockFiles",
+					"command": "atomic-component-suite.generateComponentJavascriptFile",
 					"group": "2_workspace@5",
+					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/(atoms|molecules|organisms)\\//"
+				},
+				{
+					"command": "atomic-component-suite.generateComponentBlockFiles",
+					"group": "2_workspace@6",
 					"when": "explorerResourceIsFolder && resourcePath =~ /template-parts\\/organisms\\//"
 				}
 			],
@@ -499,6 +509,10 @@
 				},
 				{
 					"command": "atomic-component-suite.generateComponentPartFile",
+					"when": "never"
+				},
+				{
+					"command": "atomic-component-suite.generateComponentBlockFile",
 					"when": "never"
 				},
 				{
