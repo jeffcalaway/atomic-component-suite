@@ -26,9 +26,9 @@ const template = function (file) {
   const componentPath = `${dirName}/${folderName}`;
 
   // Calculate maximum key length, including 'id'
-  const maxKeyLength = Math.max(...props.map(prop => prop.length), 2); // 2 for "id"
+  const maxKeyLength = Math.max(...props.map(prop => prop.length), 2);
 
-  const pad = key => key.padEnd(maxKeyLength);
+  const pad = (key, extra = 0) => key.padEnd(maxKeyLength + extra);
 
   return `<?php
     $${pad('id')} = get_sub_field('anchor_tag');
@@ -36,8 +36,8 @@ ${props.map(prop => `    $${pad(prop)} = get_sub_field('${prop}');`).join('\n')}
 ?>
 
 <?php render_template_part('${componentPath}', [
-    ${pad(`'id'`)} => $${pad('id')},
-${props.map(prop => `    ${pad(`'${prop}'`)} => $${prop},`).join('\n')}
+    ${pad(`'id'`, 2)} => $${pad('id')},
+${props.map(prop => `    ${pad(`'${prop}'`, 2)} => $${prop},`).join('\n')}
 ]); ?>`;
 }
 
