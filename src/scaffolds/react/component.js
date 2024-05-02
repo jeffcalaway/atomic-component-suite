@@ -14,7 +14,7 @@ const template = function (file) {
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
-import './${folderClass}.scss
+import './${folderClass}.scss';
 
 const ${folderClass} = ({
   className,
