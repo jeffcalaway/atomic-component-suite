@@ -317,10 +317,10 @@ function activate(context) {
   // ✅ Create Taxonomy Functions File
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  const createTaxonomyFunctionsFile = (folder, open = false) => {
+  const createTaxonomyFunctionsFile = (folder, postTypeName, open = false) => {
     const folderPath = syntax.getPath(folder);
     const filePath = `${folderPath}/functions.php`;
-    const template = taxonomy.functions.template(folder);
+    const template = taxonomy.functions.template(folder, postTypeName);
 
     file.create(filePath, template, open);
   }
@@ -329,13 +329,13 @@ function activate(context) {
   // ✅ Create Taxonomy Interface File
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  const createTaxonomyInterfaceFile = (folder, open = false) => {
+  const createTaxonomyInterfaceFile = (folder, postTypeName, open = false) => {
     const folderName = syntax.getName(folder);
     const singleName = format.toSingular(folderName);
 
     const folderPath = syntax.getPath(folder);
     const filePath = `${folderPath}/class-${singleName}.php`;
-    const template = taxonomy.taxInterface.template(folder);
+    const template = taxonomy.taxInterface.template(folder, postTypeName);
 
     file.create(filePath, template, open);
   }
@@ -344,10 +344,10 @@ function activate(context) {
   // ✅ Create Taxonomy Setup File
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  const createTaxonomySetupFile = (folder, open = false) => {
+  const createTaxonomySetupFile = (folder, postTypeName, open = false) => {
     const folderPath = syntax.getPath(folder);
     const filePath = `${folderPath}/class-setup.php`;
-    const template = taxonomy.setup.template(folder);
+    const template = taxonomy.setup.template(folder, postTypeName);
 
     file.create(filePath, template, open);
   }
@@ -357,11 +357,11 @@ function activate(context) {
   // ✅ Create Taxonomy Files
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  const createTaxonomyFiles = (folder, templateName) => {
+  const createTaxonomyFiles = (folder, postTypeName) => {
     const folderName = syntax.getName(folder);
     const singleName = format.toSingular(folderName);
 
-    const template = taxonomy[templateName];
+    const template = taxonomy[postTypeName];
 
     let files = {
       'functions': 'functions.php',
@@ -371,12 +371,13 @@ function activate(context) {
       'setup': 'class-setup.php'
     }
 
-    for (let method in files) {
-      const folder = syntax.getPath(folder);
-      const file = files[method];
+    const folderPath = syntax.getPath(folder);
+    createModuleFile(folderPath);
 
-      const filePath = `${folder}/${file}`;
-      file.create(filePath, template[method](folder), method === 'setup');
+    for (let method in files) {
+      const fileName = files[method];
+      const filePath = `${folderPath}/${fileName}`;
+      file.create(filePath, template[method](folder, postTypeName), method === 'setup');
     }
   }
 
@@ -549,24 +550,48 @@ function activate(context) {
   // ✅ Generate Taxonomy Files
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  let generateTaxonomyFiles = vscode.commands.registerCommand('atomic-component-suite.generateTaxonomyFiles', (folder) => {
-    createModuleFile(folder);
-    createTaxonomyFunctionsFile(folder);
-    createTaxonomyInterfaceFile(folder);
-    createTemplateBlocksFile(folder);
-    createTemplateDataFile(folder);
-    createTaxonomySetupFile(folder, true);
+  let generateTaxonomyFiles = vscode.commands.registerCommand('atomic-component-suite.generateTaxonomyFiles', async (folder) => {
+    const postTypeName = await vscode.window.showInputBox({
+      prompt: 'Enter the name of the post type this taxonomy belongs to',
+      placeHolder: 'Post Type Name'
+    });
+
+    if (postTypeName) {
+      createModuleFile(folder);
+      createTaxonomyFunctionsFile(folder, postTypeName);
+      createTaxonomyInterfaceFile(folder, postTypeName);
+      createTemplateBlocksFile(folder);
+      createTemplateDataFile(folder);
+      createTaxonomySetupFile(folder, postTypeName, true);
+    } else {
+      vscode.window.showErrorMessage('You must enter a post type name.');
+    }
   });
 
-  let generateTaxonomyFunctionsFile = vscode.commands.registerCommand('atomic-component-suite.generateTaxonomyFunctionsFile', (folder) => {
+  let generateTaxonomyFunctionsFile = vscode.commands.registerCommand('atomic-component-suite.generateTaxonomyFunctionsFile', async (folder) => {
+    const postTypeName = await vscode.window.showInputBox({
+      prompt: 'Enter the name of the post type this taxonomy belongs to',
+      placeHolder: 'Post Type Name'
+    });
+
     createTaxonomyFunctionsFile(folder, true);
   });
 
-  let generateTaxonomyInterfaceFile = vscode.commands.registerCommand('atomic-component-suite.generateTaxonomyInterfaceFile', (folder) => {
+  let generateTaxonomyInterfaceFile = vscode.commands.registerCommand('atomic-component-suite.generateTaxonomyInterfaceFile', async (folder) => {
+    const postTypeName = await vscode.window.showInputBox({
+      prompt: 'Enter the name of the post type this taxonomy belongs to',
+      placeHolder: 'Post Type Name'
+    });
+
     createTaxonomyInterfaceFile(folder, true);
   });
 
-  let generateTaxonomySetupFile = vscode.commands.registerCommand('atomic-component-suite.generateTaxonomySetupFile', (folder) => {
+  let generateTaxonomySetupFile = vscode.commands.registerCommand('atomic-component-suite.generateTaxonomySetupFile', async (folder) => {
+    const postTypeName = await vscode.window.showInputBox({
+      prompt: 'Enter the name of the post type this taxonomy belongs to',
+      placeHolder: 'Post Type Name'
+    });
+
     createTaxonomySetupFile(folder, true);
   });
 

@@ -1,7 +1,7 @@
 const format      = require('../../utils/format');
 const { getName } = require('../../utils/syntax');
 
-const template = function (file) {
+const template = function (file, postTypeName) {
   const folderName = getName(file);
 
   const pluralName  = folderName;
@@ -11,6 +11,12 @@ const template = function (file) {
   const singleSnake = format.toLowAndSnake(singleName);
   const singleTitle = format.toCapsAndSpaces(singleName);
   const singleClass = format.toCapsAndSnake(singleName);
+
+  // Post Type Name Formats
+  const singularPtName = format.toSingular(postTypeName);
+  const singularPtSlug = format.toKebab(singularPtName);
+  const pluralPtName   = format.toPlural(postTypeName);
+  const pluralPtSnake  = format.toLowAndSnake(pluralPtName);
 
   return `<?php
     /**
@@ -77,7 +83,7 @@ const template = function (file) {
         }
   
   
-        public function get_POST_TYPE_PLURAL_LOW_SNAKE( $args = null ) {
+        public function get_${pluralPtSnake}( $args = null ) {
             if ( !$args ) {
                 $args = [
                     'numberposts' => -1,
@@ -86,7 +92,7 @@ const template = function (file) {
             }
   
             $args['${singleName}'] = $this->term->slug;
-            $args['post_type']     = 'POST_TYPE_SINGLE_SLUG';
+            $args['post_type']     = '${singularPtSlug}';
   
             return get_posts($args);
       }

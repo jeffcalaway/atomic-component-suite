@@ -1,7 +1,7 @@
 const format      = require('../../utils/format');
 const { getName } = require('../../utils/syntax');
 
-const template = function (file) {
+const template = function (file, postTypeName) {
   const folderName = getName(file);
 
   const pluralName  = folderName;
@@ -10,6 +10,11 @@ const template = function (file) {
 
   const singleName  = format.toSingular(folderName);
   const singleTitle = format.toCapsAndSpaces(singleName);
+
+  // Post Type Name Formats
+  const pluralPtName  = format.toPlural(postTypeName).toLowerCase();
+  const pluralPtSlug  = format.toKebab(pluralPtName);
+  const pluralPtSnake = format.toLowAndSnake(pluralPtName);
 
   return `<?php
 /**
@@ -29,7 +34,7 @@ class Setup extends Library\\Package {
   
     public function initialize() {
         $this->add_action( 'init', 'register_taxonomy', 5 );
-        $this->add_filter( 'theme/POST_TYPE_PLURAL_SLUG/register/taxonomies', 'add_taxonomy_to_POST_TYPE_PLURAL_SNAKE', 10 );
+        $this->add_filter( 'theme/${pluralPtSlug}/register/taxonomies', 'add_taxonomy_to_${pluralPtSnake}', 10 );
 
         parent::initialize();
     }
@@ -72,7 +77,7 @@ class Setup extends Library\\Package {
     }
     
     
-    public function add_taxonomy_to_POST_TYPE_PLURAL_SNAKE($taxonomies) {
+    public function add_taxonomy_to_${pluralPtSlug}($taxonomies) {
         array_push( $taxonomies, '${singleName}' );
         return $taxonomies;
     }

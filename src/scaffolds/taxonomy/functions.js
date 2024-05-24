@@ -1,20 +1,26 @@
 const format      = require('../../utils/format');
 const { getName } = require('../../utils/syntax');
 
-const template = function (file) {
-    const folderName = getName(file);
-
-    const pluralName  = folderName;
-    const pluralSnake = format.toLowAndSnake(pluralName);
-    const pluralRef   = format.toLowAndSpaces(pluralName);
-    const pluralTitle = format.toCapsAndSpaces(pluralName);
-    const pluralClass = format.toCapsAndSnake(pluralName);
+const template = function (file, postTypeName) {
+  const folderName = getName(file);
   
-    const singleName  = format.toSingular(folderName);
-    const singleSnake = format.toLowAndSnake(singleName);
-    const singleRef   = format.toLowAndSpaces(singleName);
-    const singleTitle = format.toCapsAndSpaces(singleName);
-    const singleClass = format.toCapsAndSnake(singleName);
+  const pluralName  = folderName;
+  const pluralSnake = format.toLowAndSnake(pluralName);
+  const pluralRef   = format.toLowAndSpaces(pluralName);
+  const pluralTitle = format.toCapsAndSpaces(pluralName);
+  const pluralClass = format.toCapsAndSnake(pluralName);
+  
+  const singleName  = format.toSingular(folderName);
+  const singleSnake = format.toLowAndSnake(singleName);
+  const singleRef   = format.toLowAndSpaces(singleName);
+  const singleTitle = format.toCapsAndSpaces(singleName);
+  const singleClass = format.toCapsAndSnake(singleName);
+  
+  // Post Type Name Formats
+  const pluralPtName     = format.toPlural(postTypeName);
+  const pluralPtCapName  = format.toCapsAndSpaces(pluralPtName);
+  const pluralPtLowName  = format.toLowAndSpaces(pluralPtName);
+  const pluralPtLowSnake = format.toLowAndSnake(pluralPtName);
 
   return `<?php
 /**
@@ -213,22 +219,22 @@ function get_${singleSnake}_title( $${singleSnake} = null ) {
 
 
 //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
-// ✅ Get ${singleTitle} POST_TYPE_PLURAL_CAP_NAME
+// ✅ Get ${singleTitle} ${pluralPtCapName}
 //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 /**
- * Retrieve ${singleRef} POST_TYPE_PLURAL_LOW_NAME given a term ID or term object.
+ * Retrieve ${singleRef} ${pluralPtLowName} given a term ID or term object.
  *
  * @param int|WP_Term|${singleClass}|null $${singleSnake}
  *  Term ID, term object, ${singleClass} object
  * 
  * @return string|null
  */
-function get_${singleSnake}_POST_TYPE_PLURAL_LOW_SNAKE( $${singleSnake} = null ) {
+function get_${singleSnake}_${pluralPtLowSnake}( $${singleSnake} = null ) {
     $${singleSnake} = get_${singleSnake}($${singleSnake});
 
     if (!$${singleSnake}) return;
 
-    return $${singleSnake}->get_POST_TYPE_PLURAL_LOW_SNAKE();
+    return $${singleSnake}->get_${pluralPtLowSnake}();
 }`;
 }
 

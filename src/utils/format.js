@@ -49,6 +49,22 @@ const toSingular = function (string) {
   }
 }
 
+const toPlural = function (string) {
+  if (string.endsWith('y')) {
+    return string.slice(0, -1) + 'ies';
+  }
+  else if (string.endsWith('s')) {
+    if (string.slice(-4, -3) === 'e') {
+      return string.slice(0, -1) + 'es';
+    } else {
+      return string + 'es';
+    }
+  }
+  else {
+    return string + 's';
+  }
+}
+
 module.exports = {
   toCapsAndSpaces,
   toLowAndSpaces,
@@ -58,5 +74,6 @@ module.exports = {
   toLowAndCamel,
   toKebab,
   toFirstLetter,
-  toSingular
+  toSingular,
+  toPlural
 }
