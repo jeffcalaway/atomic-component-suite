@@ -71,7 +71,7 @@ class Setup extends Library\\Package {
             'show_in_menu'        => true,
             'show_in_admin_bar'   => true,
             'menu_position'       => null,
-            'menu_icon'           => 'dashicons-DASHICON_SLUG',
+            'menu_icon'           => 'dashicons-embed-post',
             'capability_type'     => 'post',
             'hierarchical'        => true,
             'supports'            => $supports,
