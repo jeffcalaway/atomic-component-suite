@@ -6,11 +6,13 @@ const phpTemplate = function (file) {
   const dirName    = getDirName(file);
 
   return `<?php
-  $anchor_id = get_isset_val( $block, 'anchor' );
+  $is_gutenberg     = isset($block);
+  $id               = $is_gutenberg ? get_isset_val($block, 'anchor'): get_acf_field_value('anchor_tag');
+  // $example          = get_acf_field_value( 'example', $is_gutenberg );
 ?>
 
 <?php render_template_part('${dirName}/${folderName}', [
-  'id' => $anchor_id,
+  'id' => $id,
 ]); ?>`;
 }
 
@@ -26,7 +28,7 @@ const jsonTemplate = function (file) {
     "category": "theme",
     "apiVersion": 2,
     "acf": {
-        "mode": "auto",
+        "mode": "preview",
         "renderTemplate": "template-parts/${dirName}/${folderName}/${folderName}.block.php"
     },
     "supports": {
