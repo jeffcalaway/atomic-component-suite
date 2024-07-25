@@ -40,7 +40,7 @@ class Setup extends Library\\Package {
             'singular_name'      => '${singleTitle}',
             'add_new_item'       => 'Add ${singleTitle}',
             'edit_item'          => 'Edit ${singleTitle}',
-            'new_item'           => 'New ${singleTitle}',
+            'add_new'            => 'Add New ${singleTitle}',
             'view_item'          => 'View ${singleTitle}',
             'search_items'       => 'Search ${pluralTitle}',
             'not_found'          => 'No ${pluralTitle} Found',
