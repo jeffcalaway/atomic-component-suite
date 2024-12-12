@@ -1,5 +1,6 @@
 const format                  = require('../../utils/format');
 const { getName, getDirName } = require('../../utils/syntax');
+const styleScaffold           = require('../../scaffolds/style');
 
 const part = function (file) {
   const folderName = getName(file);
@@ -87,8 +88,8 @@ const stories = function (file) {
     }`;
 }
 
-const style      = false;
 const javascript = false;
+const style      = (file) => styleScaffold.template(file);
 
 module.exports = {
   part,

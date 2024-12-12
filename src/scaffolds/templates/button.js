@@ -1,5 +1,7 @@
 const format                  = require('../../utils/format');
 const { getName, getDirName } = require('../../utils/syntax');
+const storiesScaffold         = require('../../scaffolds/stories');
+const styleScaffold           = require('../../scaffolds/style');
 
 const part = function (file) {
   const folderName = getName(file);
@@ -14,7 +16,6 @@ const part = function (file) {
         'text',
         'url',
         'target',
-        'rel',
         'aria_label',
         'aria_controls',
         'aria_owns',
@@ -42,7 +43,6 @@ const part = function (file) {
     $props->set_attributes([
         'id',
         'target',
-        'rel',
         'aria_label',
         'aria_controls',
         'aria_owns',
@@ -137,8 +137,8 @@ const part = function (file) {
 }
 
 const javascript = false;
-const style      = false;
-const stories      = false;
+const style      = (file) => styleScaffold.template(file);
+const stories    = (file) => storiesScaffold.template(file);
 
 module.exports = {
   part,

@@ -182,7 +182,7 @@ function activate(context) {
 
   const createClassSetupFile = (folder, open = false) => {
     const folderPath = syntax.getPath(folder);
-    const filePath = `${folderPath}/setup.php`;
+    const filePath = `${folderPath}/class-setup.php`;
     const template = classes.setup.template(folder);
 
     file.create(filePath, template, open);
@@ -195,8 +195,10 @@ function activate(context) {
 
   const createClassInterfaceFile = (folder, open = false) => {
     const folderPath = syntax.getPath(folder);
-    const filePath = `${folderPath}/interface.php`;
-    const template = classes.interface.template(folder);
+    const folderName = syntax.getName(folder);
+    const singularName = format.toSingular(folderName)
+    const filePath = `${folderPath}/class-${singularName}.php`;
+    const template = classes.postInterface.template(folder);
 
     file.create(filePath, template, open);
   }
@@ -493,23 +495,23 @@ function activate(context) {
     createTemplateDataFile(folder, true);
   });
 
-  let generateClassInterfaceFile = vscode.commands.registerCommand('atomic-component-suite.generateClassInterface', (folder) => {
+  let generateClassInterfaceFile = vscode.commands.registerCommand('atomic-component-suite.generateClassInterfaceFile', (folder) => {
     createClassInterfaceFile(folder, true);
   });
 
-  let generateClassFunctionsFile = vscode.commands.registerCommand('atomic-component-suite.generateClassFunctions', (folder) => {
+  let generateClassFunctionsFile = vscode.commands.registerCommand('atomic-component-suite.generateClassFunctionsFile', (folder) => {
     createClassFunctionsFile(folder, true);
   });
 
-  let generateClassSetupFile = vscode.commands.registerCommand('atomic-component-suite.generateClassSetup', (folder) => {
+  let generateClassSetupFile = vscode.commands.registerCommand('atomic-component-suite.generateClassSetupFile', (folder) => {
     createClassSetupFile(folder, true);
   });
 
-  let generateClassModuleFile = vscode.commands.registerCommand('atomic-component-suite.generateClassModule', (folder) => {
+  let generateClassModuleFile = vscode.commands.registerCommand('atomic-component-suite.generateClassModuleFile', (folder) => {
     createClassModuleFile(folder, true);
   });
 
-  let generateClassHooksFile = vscode.commands.registerCommand('atomic-component-suite.generateClassHooks', (folder) => {
+  let generateClassHooksFile = vscode.commands.registerCommand('atomic-component-suite.generateClassHooksFile', (folder) => {
     createClassHooksFile(folder, true);
   });
 
