@@ -1,43 +1,48 @@
-const vscode = require('vscode');
-const fs = require('fs');
 const { getName, getDirName } = require('../utils/syntax');
 
-const template = function (file) {
+const template = function (file, props = []) {
   const folderName = getName(file);
   const dirName = getDirName(file);
-  const filePath = file.fsPath;
-  const partUri = `${filePath}/${folderName}`;
-  const partPath = `${partUri}.php`;
-  let props = [];
-
-  if (partPath) {
-    const content = fs.readFileSync(partPath, 'utf8');
-    const regex = /\$props->admit_props\(\[\s*([\s\S]*?)\s*\]\)/;
-    const match = content.match(regex);
-
-    if (match) {
-      props = match[1].split(',').map(item => item.trim().replace(/['"]/g, ''));
-      props = props.filter(item => item !== 'id');
-    }
-  } else {
-    vscode.window.showErrorMessage('No valid file found.');
-  }
-
   const componentPath = `${dirName}/${folderName}`;
 
-  // Calculate maximum key length, including 'id'
-  const maxKeyLength = Math.max(...props.map(prop => prop.length), 2);
+  props = props || [];
 
-  const pad = (key, extra = 0) => key.padEnd(maxKeyLength + extra);
+  // Determine the longest var_name length for alignment of variable assignments
+  const longestVarNameLength = props.length
+    ? Math.max(...props.map(prop => prop.var_name.length))
+    : 2;
 
-  return `<?php
-    $${pad('id')} = get_sub_field('anchor_tag');
-${props.map(prop => `    $${pad(prop)} = get_sub_field('${prop}');`).join('\n')}
+  // Determine the longest prop_name length for alignment of arguments in render_template_part
+  const longestPropNameLength = props.length
+    ? Math.max(...props.map(prop => prop.prop_name.length))
+    : 2;
+
+  // Build variable declarations
+  // Each line: $var_name (padded) = get_sub_field('field_name');
+  const varSetup = props.length
+    ? `<?php
+${props.map(prop => {
+  const varNamePadded = prop.var_name.padEnd(longestVarNameLength);
+  return `    $${varNamePadded} = get_sub_field('${prop.field_name}');`;
+}).join('\n')}
 ?>
 
-<?php render_template_part('${componentPath}', [
-    ${pad(`'id'`, 2)} => $${pad('id')},
-${props.map(prop => `    ${pad(`'${prop}'`, 2)} => $${prop},`).join('\n')}
+`
+    : '';
+
+  // Build arguments for render_template_part
+  // Each line: 'prop_name' (padded) => $var_name,
+  const args = props.map(prop => {
+    const propName = prop.prop_name;
+    const propNamePadded = `'${propName}'`.padEnd(longestPropNameLength + 2); 
+    // +2 for the quotes around propName
+    // Example: prop_name = heading (7 chars) → 'heading' = 9 chars total
+    // padEnd(longestPropNameLength+2) accounts for quotes length
+    return `    ${propNamePadded} => $${prop.var_name},`;
+  }).join('\n');
+
+  return `${varSetup}<?php render_template_part('${componentPath}', [
+${args}
 ]); ?>`;
 }
 

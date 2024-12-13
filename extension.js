@@ -32,9 +32,58 @@ function activate(context) {
   // ✅ Create Block File
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  const createComponentBlockFile = (folder, open = false) => {
+  const createComponentBlockFile = async (folder, props = [], open = false) => {
     const filePath = syntax.getFile(folder, '.php', syntax.getBuilderPath(folder));
-    const template = tBlock.template(folder);
+    const partPath = syntax.getFile(folder, '.php');
+
+    if (fs.existsSync(partPath)) {
+      const content = fs.readFileSync(partPath, 'utf8');
+      const regex = /\$props->admit_props\(\[\s*([\s\S]*?)\s*\]\)/;
+      const match = content.match(regex);
+
+      if (match) {
+        props = match[1].replace(/,\s*$/, '').split(',').map(item => {
+          const itemValue = item.trim().replace(/['"]/g, '');
+          return {
+            label: itemValue,
+            value: {
+              prop_name  : itemValue,
+              var_name   : itemValue,
+              field_name : itemValue
+            }
+          };
+        });
+      }
+    }
+
+    // check if partPath has the string 'organism' in it
+    if (partPath.includes('organism')) {
+      props.filter(prop => prop.prop_name !== 'id');
+      props = [
+        {
+          label: 'anchor_tag',
+          value: {
+            prop_name  : 'id',
+            var_name   : 'anchor_tag',
+            field_name : 'anchor_tag'
+          }
+        },
+        ...props
+      ];
+    }
+
+    if (props.length) {
+      props = await vscode.window.showQuickPick(props, {
+        title: 'Generate Template Block',
+        placeHolder: 'Select which props you would like to pass',
+        canPickMany: true
+      });
+    }
+
+    // get only the value of the props
+    props = props.map(prop => prop.value);
+
+    const template = tBlock.template(folder, props);
 
     file.create(filePath, template, open);
   }
@@ -80,10 +129,61 @@ function activate(context) {
   // ✅ Create Block PHP File
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  const createComponentBlockPhpFile = (folder, open = false) => {
+  const createComponentBlockPhpFile = async (folder, props = [], open = false) => {
     const phpFilePath = syntax.getFile(folder, '.block.php');
-    const phpTemplate = block.phpTemplate(folder);
+    const partPath = syntax.getFile(folder, '.php');
 
+    if (fs.existsSync(partPath)) {
+      const content = fs.readFileSync(partPath, 'utf8');
+      const regex = /\$props->admit_props\(\[\s*([\s\S]*?)\s*\]\)/;
+      const match = content.match(regex);
+
+      if (match) {
+        props = match[1].replace(/,\s*$/, '').split(',').map(item => {
+          const itemValue = item.trim().replace(/['"]/g, '');
+          return {
+            label: itemValue,
+            value: {
+              prop_name  : itemValue,
+              var_name   : itemValue,
+              field_name : itemValue
+            }
+          };
+        });
+      }
+    }
+
+    if (partPath.includes('organism')) {
+      props.filter(prop => prop.prop_name !== 'id');
+      props = [
+        {
+          label: 'anchor_tag',
+          value: {
+            var_name: 'id',
+            prop_name: 'id',
+            value: '$is_gutenberg ? get_isset_val($block, \'anchor\'): get_acf_field_value(\'anchor_tag\')'
+          }
+        },
+        ...props
+      ];
+    }
+
+    // If we have props, let the user pick which ones they want to pass.
+    if (props.length) {
+      props = await vscode.window.showQuickPick(props, {
+        title: 'Generate Gutenberg Block',
+        placeHolder: 'Select which props you would like to pass',
+        canPickMany: true
+      });
+    }
+
+    props = props || [];
+
+    // get only the value of the props
+    props = props.map(prop => prop.value);
+
+    const phpTemplate = block.phpTemplate(folder, props);
+    
     file.create(phpFilePath, phpTemplate, open);
   }
 
@@ -142,7 +242,7 @@ function activate(context) {
     const pluralName = syntax.getName(folder);
     const dirPath = syntax.getDirPath(folder);
     const filePath = `${dirPath}/class-${pluralName}.php`;
-    const template = classes.parentModule.template(folder);
+    const template = classes.parentModule.template(folder, ['setup', 'template_blocks', 'template_data']);
 
 
     if (!fs.existsSync(filePath)) {
@@ -221,11 +321,11 @@ function activate(context) {
   // ✅ Create Class Module File
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  const createClassModuleFile = (folder, open = false) => {
+  const createClassModuleFile = (folder, modules = [], open = false) => {
     const pluralName = syntax.getName(folder);
     const dirPath = syntax.getDirPath(folder);
     const filePath = `${dirPath}/class-${pluralName}.php`;
-    const template = classes.parentModuleEmpty.template(folder);
+    const template = classes.parentModule.template(folder, modules);
 
 
     if (!fs.existsSync(filePath)) {
@@ -388,10 +488,78 @@ function activate(context) {
   // ✅ Generate Component Files
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  let generateFiles = vscode.commands.registerCommand('atomic-component-suite.generateComponentFiles', (folder) => {
-    createComponentStoriesFile(folder);
-    createComponentStyleFile(folder);
-    createComponentPartFile(folder, true);
+  let generateFiles = vscode.commands.registerCommand('atomic-component-suite.generateComponentFiles', async (folder) => {
+    const options = [
+      {
+        label: 'Template Part',
+        value: 'template-part'
+      },
+      {
+        label: 'Template Block',
+        value: 'template-block'
+      },
+      {
+        label: 'Gutenberg Block',
+        value: 'gutenberg-block'
+      },
+      {
+        label: 'Stories',
+        value: 'stories'
+      },
+      {
+        label: 'Style',
+        value: 'style'
+      },
+      {
+        label: 'Javascript',
+        value: 'javascript'
+      }
+    ];
+    
+    const selected = await vscode.window.showQuickPick(options, {
+      title: 'Generate New Component',
+      placeHolder: 'Select which files you would like to include',
+      canPickMany: true
+    });
+
+    if (!selected) return;
+
+    async function processFile(file, open) {
+      switch (file.value) {
+        case 'template-part':
+          createComponentPartFile(folder, open);
+          break;
+        case 'template-block':
+          await createComponentBlockFile(folder, [], open);
+          break;
+        case 'gutenberg-block':
+          createComponentBlockJsonFile(folder, open);
+          await createComponentBlockPhpFile(folder, [], open);
+          break;
+        case 'stories':
+          createComponentStoriesFile(folder, open);
+          break;
+        case 'style':
+          createComponentStyleFile(folder, open);
+          break;
+        case 'javascript':
+          createComponentJavascriptFile(folder, open);
+          break;
+      }
+    }
+
+    // move template-part to last in selected so that it definitely opens after the others
+    const partIndex = selected.findIndex(item => item.value === 'template-part');
+    if (partIndex > -1) {
+      const part = selected.splice(partIndex, 1);
+      selected.push(part[0]);
+    }
+
+    for (let i = 0; i < selected.length; i++) {
+      const file = selected[i];
+      const last = i === selected.length - 1;
+      await processFile(file, last);
+    }
   });
 
 
@@ -409,7 +577,7 @@ function activate(context) {
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
   let generateBlockFile = vscode.commands.registerCommand('atomic-component-suite.generateComponentBlockFile', (folder) => {
-    createComponentBlockFile(folder, true);
+    createComponentBlockFile(folder, [], true);
   });
 
 
@@ -445,7 +613,7 @@ function activate(context) {
   //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
   let generateBlockFiles = vscode.commands.registerCommand('atomic-component-suite.generateComponentBlockFiles', (folder) => {
-    createComponentBlockPhpFile(folder, true);
+    createComponentBlockPhpFile(folder, [], true);
     createComponentBlockJsonFile(folder, true);
   });
 
@@ -508,17 +676,79 @@ function activate(context) {
   });
 
   let generateClassModuleFile = vscode.commands.registerCommand('atomic-component-suite.generateClassModuleFile', (folder) => {
-    createClassModuleFile(folder, true);
+    createClassModuleFile(folder, [], true);
   });
 
   let generateClassHooksFile = vscode.commands.registerCommand('atomic-component-suite.generateClassHooksFile', (folder) => {
     createClassHooksFile(folder, true);
   });
 
-  let generateClassFiles = vscode.commands.registerCommand('atomic-component-suite.generateClassFiles', (folder) => {
-    createClassModuleFile(folder);
-    createClassFunctionsFile(folder);
-    createClassInterfaceFile(folder, true);
+  let generateClassFiles = vscode.commands.registerCommand('atomic-component-suite.generateClassFiles', async (folder) => {
+    const options = [
+      {
+        label: 'Functions',
+        value: 'functions'
+      },
+      {
+        label: 'Interface',
+        value: 'interface'
+      },
+      {
+        label: 'Setup',
+        value: 'setup'
+      },
+      {
+        label: 'Template Blocks',
+        value: 'template_blocks'
+      },
+      {
+        label: 'Template Data',
+        value: 'template_data'
+      },
+      {
+        label: 'Hooks',
+        value: 'hooks'
+      },
+    ];
+    
+    const selected = await vscode.window.showQuickPick(options, {
+      title: 'Generate New Class',
+      placeHolder: 'Select which modules you would like to include',
+      canPickMany: true
+    });
+
+    if (!selected) return;
+
+    const modules = selected
+      .filter(module => !['functions', 'interface'].includes(module.value))
+      .map(module => module.value);
+
+    createClassModuleFile(folder, modules);
+
+    selected.forEach((module, i) => {
+      const last = i === selected.length - 1;
+
+      switch (module.value) {
+        case 'functions':
+          createClassFunctionsFile(folder, last);
+          break;
+        case 'interface':
+          createClassInterfaceFile(folder, last);
+          break;
+        case 'setup':
+          createClassSetupFile(folder, last);
+          break;
+        case 'template_blocks':
+          createTemplateBlocksFile(folder, last);
+          break;
+        case 'template_data':
+          createTemplateDataFile(folder, last);
+          break;
+        case 'hooks':
+          createClassHooksFile(folder, last);
+          break;
+      }
+    });
   });
 
 
