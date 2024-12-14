@@ -1,17 +1,17 @@
-const style = require('./react/style');
-const index = require('./react/index');
-const typedIndex = require('./react/typed-index');
-const component = require('./react/component');
-const typedComponent = require('./react/typed-component');
-const stories = require('./react/stories');
-const typedStories = require('./react/typed-stories');
+const component      = require('./react/component');
+const index          = require('./react/index');
+const stories        = require('./react/stories');
+const style          = require('./react/style');
+const typedComponent = require('./react/typedComponent');
+const typedIndex     = require('./react/typedIndex');
+const typedStories   = require('./react/typedStories');
 
 module.exports = {
-  style,
-  index,
-  typedIndex,
   component,
-  typedComponent,
+  index,
   stories,
-  typedStories,
+  style,
+  typedComponent,
+  typedIndex,
+  typedStories
 }
