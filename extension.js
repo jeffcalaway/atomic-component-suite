@@ -1,8 +1,9 @@
-const vscode = require('vscode');
-const registerCommands = require('./commands/registerCommands');
+const registerIncludesMenu = require('./menus/includesMenu');
+const registerTemplatePartsMenu = require('./menus/templatePartsMenu');
 
 function activate(context) {
-    registerCommands(context);
+  registerIncludesMenu(context);
+  registerTemplatePartsMenu(context);
 }
 
 module.exports = {
