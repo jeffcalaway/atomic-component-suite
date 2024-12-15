@@ -1,5 +1,5 @@
-const registerIncludesMenu = require('./menus/includesMenu');
-const registerTemplatePartsMenu = require('./menus/templatePartsMenu');
+const registerIncludesMenu = require('./src/menus/includesMenu');
+const registerTemplatePartsMenu = require('./src/menus/templatePartsMenu');
 
 function activate(context) {
   registerIncludesMenu(context);
