@@ -1,6 +1,6 @@
-const format  = require('../../../../../utils/format');
-const syntax  = require('../../../../../utils/syntax');
-const prompts = require('../../../../../utils/prompts');
+const format  = require('../../../../utils/format');
+const syntax  = require('../../../../utils/syntax');
+const prompts = require('../../../../utils/prompts');
 
 const filePath = function (file) {
     const pluralName = syntax.getName(file);

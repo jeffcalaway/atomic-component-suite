@@ -9,7 +9,12 @@ const open = function (filePath) {
 
 const create = function ( filePath, content, openAfterCreate = false ) {
   if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath,content);
+    try {
+      fs.writeFileSync(filePath, content);
+      console.log(`Generated: ${filePath}`);
+    } catch (error) {
+      console.error(`Error writing file: ${filePath}`, error);
+    }
 
     if (openAfterCreate) {
       open(filePath);
@@ -17,7 +22,17 @@ const create = function ( filePath, content, openAfterCreate = false ) {
   }
 }
 
+const read = function (filePath) {
+  return fs.readFileSync(filePath, 'utf8');
+}
+
+const exists = function (filePath) {
+  return fs.existsSync(filePath);
+}
+
 module.exports = {
   create,
-  open
+  open,
+  read,
+  exists
 }

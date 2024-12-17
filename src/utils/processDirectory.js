@@ -1,15 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-
-// Helper function to write a file
-const writeFile = (filePath, content) => {
-  try {
-    fs.writeFileSync(filePath, content);
-    console.log(`Generated: ${filePath}`);
-  } catch (error) {
-    console.error(`Error writing file: ${filePath}`, error);
-  }
-};
+const file = require('./file');
 
 // Generic function to process a directory and generate exports
 const processDirectory = (directoryPath = null, defaultDirectoryName = null) => {
@@ -29,15 +20,21 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
 
           exports[targetName] = {
             ...moduleExports,
-            generate: (folder) => {
+            generate: async (folder, openAfterWrite = false) => {
               // Folder-based generate logic
-              Object.values(moduleExports).forEach(({ filePath, filePrompt, fileContent }) => {
+              Object.values(moduleExports).forEach( async ({ filePath, filePrompt, fileContent }) => {
                 if (filePath && fileContent) {
                   const outputFilePath = filePath(folder);
-                  const outputContent = fileContent(folder, filePrompt(folder));
+
+                  // check if filePrompt is an available function
+                  let prompt;
+                  if (typeof filePrompt === 'function') {
+                    prompt = await filePrompt(folder);
+                  }
+                  const outputContent = fileContent(folder, prompt);
 
                   if (outputFilePath && outputContent) {
-                    writeFile(outputFilePath, outputContent);
+                    file.create(outputFilePath, outputContent, openAfterWrite);
                   } else {
                     console.warn(`Missing filePath or fileContent in folder: ${targetName}`);
                   }
@@ -54,13 +51,17 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
 
         if (typeof getFilePath === 'function' && typeof getFileContent === 'function') {
           exports[targetName] = {
-            generate: (folder) => {
+            generate: async (folder, openAfterWrite = false) => {
               // File-based generate logic
               const outputFilePath = getFilePath(folder);
-              const outputContent = getFileContent(folder, runFilePrompt(folder));
+              let prompt;
+              if (typeof runFilePrompt === 'function') {
+                prompt = await runFilePrompt(folder);
+              }
+              const outputContent = getFileContent(folder, prompt);
 
               if (outputFilePath && outputContent) {
-                writeFile(outputFilePath, outputContent);
+                file.create(outputFilePath, outputContent, openAfterWrite);
               } else {
                 console.warn(`Missing filePath or fileContent in file: ${targetName}`);
               }

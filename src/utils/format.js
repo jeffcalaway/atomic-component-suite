@@ -3,7 +3,7 @@ const toCapsAndSpaces = function (string) {
 }
 
 const toLowAndSpaces = function (string) {
-  return string.replace(/-/g, " ").replace(/\b\w/g, l => l);
+  return string.toLowerCase().replace(/-/g, " ");
 }
 
 const toCapsAndSnake = function (string) {

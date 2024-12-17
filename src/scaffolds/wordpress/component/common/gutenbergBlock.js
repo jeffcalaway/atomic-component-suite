@@ -1,6 +1,6 @@
-const syntax  = require('../../../../../utils/syntax');
-const prompts = require('../../../../../utils/prompts');
-const fs      = require('fs');
+const syntax  = require('../../../../utils/syntax');
+const prompts = require('../../../../utils/prompts');
+const fileUtil = require('../../../../utils/file');
 
 const filePath = function (file) {
   const folderName = syntax.getName(file);
@@ -8,24 +8,24 @@ const filePath = function (file) {
   return `${targetPath}/${folderName}.block.php`;
 }
 
-const filePrompt = function (file) {
+const filePrompt = async function (file) {
   const templatePartPath = syntax.getFile(file, '.php');
   let options = [];
 
-  if (fs.existsSync(templatePartPath)) {
-    const content = fs.readFileSync(templatePartPath, 'utf8');
+  if (fileUtil.exists(templatePartPath)) {
+    const content = fileUtil.read(templatePartPath);
     const regex = /\$props->admit_props\(\[\s*([\s\S]*?)\s*\]\)/;
     const match = content.match(regex);
 
-    if (match) {
+    if (match[1] !== null && match[1] !== undefined && match[1] !== '') {
       options = match[1].replace(/,\s*$/, '').split(',').map(item => {
         const itemValue = item.trim().replace(/['"]/g, '');
         return {
           label: itemValue,
           value: {
-            prop_name  : itemValue,
-            var_name   : itemValue,
-            field_name : itemValue
+            propName  : itemValue,
+            varName   : itemValue,
+            fieldName : itemValue
           }
         };
       });
@@ -34,14 +34,14 @@ const filePrompt = function (file) {
 
   // check if templatePartPath has the string 'organism' in it
   if (templatePartPath.includes('organism')) {
-    options.filter(option => option.value.prop_name !== 'id');
+    options.filter(option => option.value.propName !== 'id');
     options = [
       {
         label: 'anchor_tag',
         value: {
-          var_name: 'id',
-          prop_name: 'id',
-          value: '$is_gutenberg ? get_isset_val($block, \'anchor\'): get_acf_field_value(\'anchor_tag\')'
+          varName: 'id',
+          propName: 'id',
+          value: '$is_gutenberg ? get_isset_val($block, \'anchor\') : get_acf_field_value(\'anchor_tag\')'
         }
       },
       ...options
@@ -50,7 +50,7 @@ const filePrompt = function (file) {
 
   if (!options.length) return;
 
-  const selected = prompts.pickMany(
+  const selected = await prompts.pickMany(
     options,
     'Generate Gutenberg Block',
     'Select which props you would like to pass',
@@ -69,38 +69,38 @@ const fileContent = function (file, props) {
   const dirName = syntax.getDirName(file);
   const componentPath = `${dirName}/${folderName}`;
 
-  props = props || [];
+  props = (props && props.length) ? props : [];
   
   let variables = [
     {
-      var_name: 'is_gutenberg',
+      varName: 'is_gutenberg',
       value: 'isset($block)',
     },
     ...props
   ];
 
-  // Determine the longest var_name length for alignment of variable assignments
+  // Determine the longest varName length for alignment of variable assignments
   const longestVarNameLength = variables.length
-  ? Math.max(...variables.map(prop => prop.var_name.length))
+  ? Math.max(...variables.map(prop => prop.varName.length))
   : 2;
 
-  // Determine the longest prop_name length for alignment of arguments in render_template_part
+  // Determine the longest propName length for alignment of arguments in render_template_part
   const longestPropNameLength = props.length
-    ? Math.max(...props.map(prop => prop.prop_name.length))
+    ? Math.max(...props.map(prop => prop.propName.length))
     : 2;
 
   // Build variable declarations
-  // Each line: $var_name (padded) = get_sub_field('field_name');
+  // Each line: $varName (padded) = get_sub_field('fieldName');
   const varSetup = variables.length
     ? `<?php
 ${variables.map(variable => {
-  const varNamePadded = variable.var_name.padEnd(longestVarNameLength);
+  const varNamePadded = variable.varName.padEnd(longestVarNameLength);
 
   if (variable.value) {
     return `    $${varNamePadded} = ${variable.value};`;
   }
 
-  return `    $${varNamePadded} = get_acf_field_value( '${variable.field_name}', $is_gutenberg );`;
+  return `    $${varNamePadded} = get_acf_field_value( '${variable.fieldName}', $is_gutenberg );`;
 }).join('\n')}
 ?>
 
@@ -108,14 +108,14 @@ ${variables.map(variable => {
     : '';
 
   // Build arguments for render_template_part
-  // Each line: 'prop_name' (padded) => $var_name,
+  // Each line: 'propName' (padded) => $varName,
   const args = props.map(prop => {
-    const propName = prop.prop_name;
+    const propName = prop.propName;
     const propNamePadded = `'${propName}'`.padEnd(longestPropNameLength + 2); 
     // +2 for the quotes around propName
-    // Example: prop_name = heading (7 chars) → 'heading' = 9 chars total
+    // Example: propName = heading (7 chars) → 'heading' = 9 chars total
     // padEnd(longestPropNameLength+2) accounts for quotes length
-    return `    ${propNamePadded} => $${prop.var_name},`;
+    return `    ${propNamePadded} => $${prop.varName},`;
   }).join('\n');
 
   return `${varSetup}<?php render_template_part('${componentPath}', [

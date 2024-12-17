@@ -1,3 +1,3 @@
-const processDirectory = require('../../../../utils/processDirectory');
+const processDirectory = require('../../../utils/processDirectory');
 
 module.exports = processDirectory;

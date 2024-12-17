@@ -1,5 +1,5 @@
-const syntax  = require('../../../../../utils/syntax');
-const prompts = require('../../../../../utils/prompts');
+const syntax  = require('../../../../utils/syntax');
+const prompts = require('../../../../utils/prompts');
 const fs      = require('fs');
 
 const filePath = function (file) {
@@ -8,7 +8,7 @@ const filePath = function (file) {
   return `${page_builder}/${folderName}.php`;
 }
 
-const fileContext = function (file) {
+const filePrompt = async function (file) {
   const templatePartPath = syntax.getFile(file, '.php');
   let options = [];
 
@@ -23,9 +23,9 @@ const fileContext = function (file) {
         return {
           label: itemValue,
           value: {
-            prop_name  : itemValue,
-            var_name   : itemValue,
-            field_name : itemValue
+            propName  : itemValue,
+            varName   : itemValue,
+            fieldName : itemValue
           }
         };
       });
@@ -34,14 +34,14 @@ const fileContext = function (file) {
 
   // check if templatePartPath has the string 'organism' in it
   if (templatePartPath.includes('organism')) {
-    options.filter(option => option.value.prop_name !== 'id');
+    options.filter(option => option.value.propName !== 'id');
     options = [
       {
         label: 'anchor_tag',
         value: {
-          prop_name  : 'id',
-          var_name   : 'anchor_tag',
-          field_name : 'anchor_tag'
+          propName  : 'id',
+          varName   : 'anchor_tag',
+          fieldName : 'anchor_tag'
         }
       },
       ...options
@@ -50,7 +50,7 @@ const fileContext = function (file) {
 
   if (!options.length) return;
 
-  const selected = prompts.pickMany(
+  const selected = await prompts.pickMany(
     options,
     'Generate Template Block',
     'Select which props you would like to pass',
@@ -69,25 +69,25 @@ const fileContent = function (file, props) {
   const dirName = syntax.getDirName(file);
   const componentPath = `${dirName}/${folderName}`;
 
-  props = props || [];
+  props = (props && props.length) ? props : [];
 
-  // Determine the longest var_name length for alignment of variable assignments
+  // Determine the longest varName length for alignment of variable assignments
   const longestVarNameLength = props.length
-    ? Math.max(...props.map(prop => prop.var_name.length))
+    ? Math.max(...props.map(prop => prop.varName.length))
     : 2;
 
-  // Determine the longest prop_name length for alignment of arguments in render_template_part
+  // Determine the longest propName length for alignment of arguments in render_template_part
   const longestPropNameLength = props.length
-    ? Math.max(...props.map(prop => prop.prop_name.length))
+    ? Math.max(...props.map(prop => prop.propName.length))
     : 2;
 
   // Build variable declarations
-  // Each line: $var_name (padded) = get_sub_field('field_name');
+  // Each line: $varName (padded) = get_sub_field('fieldName');
   const varSetup = props.length
     ? `<?php
 ${props.map(prop => {
-  const varNamePadded = prop.var_name.padEnd(longestVarNameLength);
-  return `    $${varNamePadded} = get_sub_field('${prop.field_name}');`;
+  const varNamePadded = prop.varName.padEnd(longestVarNameLength);
+  return `    $${varNamePadded} = get_sub_field('${prop.fieldName}');`;
 }).join('\n')}
 ?>
 
@@ -95,14 +95,14 @@ ${props.map(prop => {
     : '';
 
   // Build arguments for render_template_part
-  // Each line: 'prop_name' (padded) => $var_name,
+  // Each line: 'propName' (padded) => $varName,
   const args = props.map(prop => {
-    const propName = prop.prop_name;
+    const propName = prop.propName;
     const propNamePadded = `'${propName}'`.padEnd(longestPropNameLength + 2); 
     // +2 for the quotes around propName
-    // Example: prop_name = heading (7 chars) → 'heading' = 9 chars total
+    // Example: propName = heading (7 chars) → 'heading' = 9 chars total
     // padEnd(longestPropNameLength+2) accounts for quotes length
-    return `    ${propNamePadded} => $${prop.var_name},`;
+    return `    ${propNamePadded} => $${prop.varName},`;
   }).join('\n');
 
   return `${varSetup}<?php render_template_part('${componentPath}', [
@@ -112,6 +112,6 @@ ${args}
 
 module.exports = {
   filePath,
-  fileContext,
+  filePrompt,
   fileContent
 }
