@@ -18,30 +18,35 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
         if (fs.existsSync(indexPath)) {
           const moduleExports = require(indexPath);
 
-          exports[targetName] = {
-            ...moduleExports,
-            generate: async (folder, openAfterWrite = false) => {
-              // Folder-based generate logic
-              Object.values(moduleExports).forEach( async ({ filePath, filePrompt, fileContent }) => {
-                if (filePath && fileContent) {
-                  const outputFilePath = filePath(folder);
+          Object.entries(moduleExports).forEach(([key, value]) => {
+            const { filePath: getFilePath, filePrompt: runFilePrompt, fileContent: getFileContent } = value;
 
-                  // check if filePrompt is an available function
+            if (typeof getFilePath === 'function' && typeof getFileContent === 'function') {
+              if (!exports[targetName]) {
+                exports[targetName] = {}; // Initialize if not already done
+              }
+              
+              exports[targetName][key] = {
+                ...value,
+                generate: async (folder, openAfterWrite = false) => {
+                  const outputFilePath = getFilePath(folder);
                   let prompt;
-                  if (typeof filePrompt === 'function') {
-                    prompt = await filePrompt(folder);
+                  if (typeof runFilePrompt === 'function') {
+                    prompt = await runFilePrompt(folder);
                   }
-                  const outputContent = fileContent(folder, prompt);
-
+                  const outputContent = getFileContent(folder, prompt);
+              
                   if (outputFilePath && outputContent) {
                     file.create(outputFilePath, outputContent, openAfterWrite);
                   } else {
-                    console.warn(`Missing filePath or fileContent in folder: ${targetName}`);
+                    console.warn(`Missing filePath or fileContent in export: ${key}`);
                   }
                 }
-              });
+              };
+            } else {
+              console.warn(`File ${targetName} does not export filePath or fileContent as functions.`);
             }
-          };
+          });
         } else {
           console.warn(`No index.js found in folder: ${targetName}`);
         }
@@ -51,6 +56,7 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
 
         if (typeof getFilePath === 'function' && typeof getFileContent === 'function') {
           exports[targetName] = {
+            ...require(targetPath),
             generate: async (folder, openAfterWrite = false) => {
               // File-based generate logic
               const outputFilePath = getFilePath(folder);

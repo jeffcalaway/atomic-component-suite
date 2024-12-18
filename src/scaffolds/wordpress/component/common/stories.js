@@ -55,7 +55,6 @@ const filePrompt = async function (file) {
   context.stories = [];
 
   while (true) {
-    console.log( 'createStories Response:', createStories );
     if (createStories == 'Yes') {
         const storyName = await prompts.input('Enter the name of the story');
         if (!storyName) break; // Exit the loop if no story name is provided
@@ -104,7 +103,7 @@ const fileContent = function (file, storyContext) {
     ? Math.max(...props.map(prop => prop.propName.length))
     : 2;
 
-    const defaultProps = props.map(prop => {
+    let defaultProps = props.map(prop => {
         const propName = prop.propName;
         const propNamePadded = `'${propName}'`.padEnd(longestPropNameLength + 2); 
         // +2 for the quotes around propName
@@ -112,6 +111,8 @@ const fileContent = function (file, storyContext) {
         // padEnd(longestPropNameLength+2) accounts for quotes length
         return `            ${propNamePadded} => null,`;
     }).join('\n');
+
+    defaultProps = defaultProps || '            ';
 
     let additionalStories = '';
 
@@ -138,9 +139,9 @@ const fileContent = function (file, storyContext) {
     }
 
     return `<?php
-  
+
 use Useful_Stories\\Library\\Stories;
-  
+
 class ${folderClass} extends Stories {
     function __construct(){
         $this->title    = '${dirTitle}/${folderTitle}';
@@ -154,7 +155,7 @@ ${defaultProps}
 
         render_template_part('${dirName}/${folderName}', $args);
     }
-  
+
     function initialize() {
         $default = $this->add_story('Default', [$this, 'template']);${additionalStories}
     }

@@ -1,5 +1,5 @@
-const format = require('../../../../utils/format');
-const syntax = require('../../../../utils/syntax');
+const format = require('../../../../../utils/format');
+const syntax = require('../../../../../utils/syntax');
 
 const filePath = function (file) {
     const folderName = syntax.getName(file);
@@ -17,6 +17,7 @@ const fileContent = function (file) {
   return `<?php
     $props->admit_props([
         'id',
+        'title'
     ]);
 
     $props->set_attributes([

@@ -4,8 +4,8 @@ const javascript   = require('./javascript');
 const stories      = require('./stories');
 
 module.exports = {
-  templatePart,
+  stories,
   style,
   javascript,
-  stories
+  templatePart
 }
