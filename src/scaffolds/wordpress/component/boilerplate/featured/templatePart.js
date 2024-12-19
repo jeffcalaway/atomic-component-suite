@@ -60,6 +60,11 @@ const filePrompt = async function (file) {
     let props = [];
     props = await prompts.pickMany(propList, 'Select Props', 'Select the props to pass to the featured component');
 
+    let requiredProps = [];
+    if (props) {
+        requiredProps = await prompts.pickMany(props, 'Select Required Props', 'Select the props that are required for the component to render');
+    }
+
     const folderName   = syntax.getName(file);
     const singularName = format.toSingular(folderName);
     const words        = singularName.split("-");
@@ -72,6 +77,7 @@ const filePrompt = async function (file) {
         type: componentType.value,
         slug: singleComponent.value,
         props,
+        requiredProps,
         elementName
     };
 }
@@ -83,19 +89,31 @@ const fileContent = function (file, component) {
 
     const className = `${dirLetter}-${folderName}`;
 
-    const componentName = folderName.replace('featured-','');
-    const words        = componentName.split("-");
-    let   elementType  = 'molecules';
-    let   elementName  = words.pop();
-          elementName  = format.toSingular(elementName);
-    let   componentTemplate = `${elementType}/${componentName}`;
-    let   propsList = "        'id'";
-    let   args = '';
+    const componentName   = folderName.replace('featured-','');
+    const words           = componentName.split("-");
+    let elementType       = 'molecules';
+    let elementName       = words.pop();
+        elementName       = format.toSingular(elementName);
+    let componentTemplate = `${elementType}/${componentName}`;
+    let propsList         = "        'id'";
+    let args              = '';
+    let conditionalStart  = '';
+    let conditionalEnd    = '';
+    let conditionalIndent = '';
 
     if (component) {
         elementType = component.type;
         elementName = component.elementName;
         componentTemplate = `${elementType}/${component.slug}`;
+
+        if (component.requiredProps.length) {
+            const requiredItems = component.requiredProps.map((prop) => {
+                return `$item['${prop}']`;
+            }).join(' && ');
+            conditionalStart  = `<?php if ( ${requiredItems} ) : ?>\n`;
+            conditionalEnd    = '\n<?php endif; ?>';
+            conditionalIndent = '    ';
+        }
 
         if (component.props && component.props.length) {
             propsList = propsList + ',' + component.props.map((prop) => {
@@ -107,7 +125,7 @@ const fileContent = function (file, component) {
                 : 2;
             args = ',' + component.props.map(prop => {
                 const propPadded = `'${prop}'`.padEnd(longestPropNameLength + 2);
-                return `\n                ${propPadded} => $${prop}`;
+                return `\n${conditionalIndent}            ${propPadded} => $${prop}`;
             }).join(',');
         }
     }
@@ -128,18 +146,16 @@ ${propsList}
     ]);
 ?>
 
-<?php if ( $items ) : ?>
-    <section
-        <?php echo $id_attr; ?>
-        class="<?php echo $class; ?>"
-    >
-        <div class="${className}__container u-container">
-            <?php render_template_part('${componentTemplate}', [
-                'class' => '${className}__${elementName}'${args}
-            ]); ?>
-        </div>
-    </section>
-<?php endif; ?>`;
+${conditionalStart}${conditionalIndent}<section
+${conditionalIndent}    <?php echo $id_attr; ?>
+${conditionalIndent}    class="<?php echo $class; ?>"
+${conditionalIndent}>
+${conditionalIndent}    <div class="${className}__container u-container">
+${conditionalIndent}        <?php render_template_part('${componentTemplate}', [
+${conditionalIndent}            'class' => '${className}__${elementName}'${args}
+${conditionalIndent}        ]); ?>
+${conditionalIndent}    </div>
+${conditionalIndent}</section>${conditionalEnd}`;
 }
 
 module.exports = {

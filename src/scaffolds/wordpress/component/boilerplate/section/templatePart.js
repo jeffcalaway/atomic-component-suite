@@ -15,29 +15,29 @@ const fileContent = function (file) {
     const className = `${dirLetter}-${folderName}`;
   
     return `<?php
-      $props->admit_props([
-          'id',
-      ]);
+    $props->admit_props([
+        'id',
+    ]);
+
+    $props->set_attributes([
+        'id'
+    ]);
   
-      $props->set_attributes([
-          'id'
-      ]);
-    
-      extract($props->to_array());
-  
-      $class = $props->class([
-          '${className}'
-      ]);
-  ?>
-  
-  <section
-      <?php echo $id_attr; ?>
-      class="<?php echo $class; ?>"
-  >
-      <div class="${className}__container u-container">
-          
-      </div>
-  </section>`;
+    extract($props->to_array());
+
+    $class = $props->class([
+        '${className}'
+    ]);
+?>
+
+<section
+    <?php echo $id_attr; ?>
+    class="<?php echo $class; ?>"
+>
+    <div class="${className}__container u-container">
+        
+    </div>
+</section>`;
 }
 
 module.exports = {

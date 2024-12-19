@@ -94,7 +94,7 @@ const fileContent = function (file, component) {
   let arrayOnlyKeys     = '                        ';
   let conditionalStart  = '\n';
   let conditionalEnd    = '';
-  let conditionalIndent = '    ';
+  let conditionalIndent = '';
 
   if (component) {
     itemPath = `${component.type}/${component.slug}`;
@@ -107,8 +107,9 @@ const fileContent = function (file, component) {
         const requiredItems = component.requiredProps.map((prop) => {
             return `$item['${prop}']`;
         }).join(' && ');
-        conditionalStart = `\n                <?php if ( ${requiredItems} ) : ?>`;
-        conditionalEnd = '\n                <?php endif; ?>';
+        conditionalStart  = `\n                <?php if ( ${requiredItems} ) : ?>`;
+        conditionalEnd    = '\n                <?php endif; ?>';
+        conditionalIndent = '    ';
     }
   }
 

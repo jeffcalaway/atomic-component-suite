@@ -1,17 +1,63 @@
 const format = require('../../../../utils/format');
+const fileUtil = require('../../../../utils/file');
 const syntax = require('../../../../utils/syntax');
+const prompts = require('../../../../utils/prompts');
 
 const filePath = function (file) {
   const targetPath = file.fsPath;
   return `${targetPath}/class-setup.php`;
 }
 
-const fileContent = function (file) {
+const filePrompt = async function (file) {
+    const iconType = await prompts.pickOne(
+        ['Dashicons', 'Custom Asset'],
+        'Icon Type',
+        'Select the icon type for the post type.'
+    );
+
+    if (!iconType) return;
+
+    switch (iconType) {
+        case 'Dashicons':
+            const selectedIcon = await prompts.selectDashicon('Select Dashicon', 'Select the dashicon for the post type.');
+
+            if (!selectedIcon) return `'${'dashicons-embed-post'}'`;
+
+            return `'${selectedIcon}'`;
+
+        case 'Custom Asset':
+            const folderPath = file.fsPath;
+            const includesFolder = fileUtil.getDirectory(folderPath);
+            const themeFolder = fileUtil.getDirectory(includesFolder);
+            const imagesFolder = `${themeFolder}/assets/images`;
+            
+            // check if the images folder exists
+            if (!fileUtil.exists(imagesFolder)) {
+                prompts.errorMessage('Could not find the images folder.');
+                return;
+            }
+
+            const iconsFolder = `${imagesFolder}/icons`;
+            const assetsPath  = fileUtil.exists(iconsFolder) ? iconsFolder : imagesFolder;
+            const getAssetPath = fileUtil.exists(iconsFolder) ? 'images/icons' : 'images';
+
+            const chosenAsset = await prompts.selectAsset(
+                assetsPath,
+                getAssetPath,
+                'Select Image Asset',
+                'Select the icon for the post type.'
+            );
+
+            return chosenAsset || `'${'dashicons-embed-post'}'`;
+    }
+}
+
+const fileContent = function (file, icon) {
   const folderName = syntax.getName(file);
 
-  const pluralName  = folderName;
+  const pluralName  = format.toPlural(folderName);
   const pluralTitle = format.toCapsAndSpaces(pluralName);
-  const pluralClass = format.toCapsAndSnake(pluralName);
+  const className   = format.toCapsAndSnake(folderName);
 
   const singleName  = format.toSingular(folderName);
   const singleTitle = format.toCapsAndSpaces(singleName);
@@ -23,11 +69,11 @@ const fileContent = function (file) {
  * A class that registers and manages the
  * ${pluralTitle} post type.
  *
- * @package Theme/${pluralClass}
+ * @package Theme/${className}
  * @version 1.0.0
  */
 
-namespace Useful_Group\\Includes\\${pluralClass};
+namespace Useful_Group\\Includes\\${className};
       use Useful_Framework\\Library;
 
 class Setup extends Library\\Package {
@@ -76,7 +122,7 @@ class Setup extends Library\\Package {
             'show_in_menu'        => true,
             'show_in_admin_bar'   => true,
             'menu_position'       => null,
-            'menu_icon'           => 'dashicons-embed-post',
+            'menu_icon'           => ${icon},
             'capability_type'     => 'post',
             'hierarchical'        => true,
             'supports'            => $supports,
@@ -94,5 +140,6 @@ class Setup extends Library\\Package {
 
 module.exports = {
   filePath,
+  filePrompt,
   fileContent
 }

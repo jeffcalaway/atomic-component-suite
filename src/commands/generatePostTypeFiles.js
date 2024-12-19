@@ -1,49 +1,112 @@
-const vscode = require('vscode');
-const fs = require('fs');
-const path = require('path');
-const prompts = require('../utils/prompts');
+const prompts       = require('../utils/prompts');
+const syntax        = require('../utils/syntax');
+const fileUtil      = require('../utils/file');
+const modules       = require('../scaffolds/wordpress/includes/postType.js');
+const commonModules = require('../scaffolds/wordpress/includes/common.js');
 
 function generatePostTypeFiles(folder) {
-  const folderPath = folder.fsPath;
-
-  // Define post type file templates
-  const postTypeFileTemplates = {
-    'functions.php': 'postType/functions.js',
-    'class-setup.php': 'postType/setup.js',
-    'class-interface.php': 'postType/interface.js',
-    'template-blocks.php': 'common/templateBlocks.js',
-    'template-data.php': 'common/templateData.js',
+  const fileTemplates = {
+    'Setup'           : 'setup',
+    'Interface'       : 'interface',
+    'Template Blocks' : 'templateBlocks',
+    'Template Data'   : 'templateData',
+    'Hooks'           : 'hooks',
+    'Custom Class'    : 'customClass',
+    'Functions'       : 'functions',
+    'Parent Module'   : 'parentModule'
   };
 
-  // Prompt the user to select which files to generate
   prompts.pickMany(
-    Object.keys(postTypeFileTemplates),
+    Object.keys(fileTemplates),
     'Select Post Type Files to Generate',
     'Select one or more post type files to generate'
-  )
-  .then((selectedFiles) => {
+  ).then((selectedFiles) => {
     if (!selectedFiles || selectedFiles.length === 0) {
-      vscode.window.showInformationMessage('No files selected.');
+      prompts.notification('No files selected.');
       return;
     }
 
-    selectedFiles.forEach((fileName) => {
-      const templateFilePath = path.join(__dirname, '..', 'src', 'scaffolds', 'wordpress', 'includes', postTypeFileTemplates[fileName]);
-      const targetFilePath = path.join(folderPath, fileName);
+    const includesParentModule = selectedFiles.includes('Parent Module');
 
-      // Check if template exists
-      if (!fs.existsSync(templateFilePath)) {
-        vscode.window.showErrorMessage(`Template for ${fileName} not found.`);
-        return;
+    // if includesParentModule is true, set 'Parent Module' as the first file to generate
+    if (includesParentModule) {
+      selectedFiles = selectedFiles.filter((selected) => selected !== 'Parent Module');
+      selectedFiles.unshift('Parent Module');
+    }
+
+    selectedFiles.forEach(async (selected) => {
+      const moduleKeyOrObject = fileTemplates[selected];
+
+      let openAfterWrite = selected === selectedFiles[selectedFiles.length - 1];
+
+      if (typeof moduleKeyOrObject === 'object') {
+        const lastSubIndex = Object.keys(moduleKeyOrObject).length - 1;
+        // If the option generates multiple files
+        Object.keys(moduleKeyOrObject).forEach( async (subKey, subIndex) => {
+          const subModule = moduleKeyOrObject[subKey];
+
+          const ptModule   = modules[subModule];
+          let commonModule = {};
+          if (!ptModule) commonModule = commonModules[subModule];
+
+          if (
+            (ptModule && typeof ptModule.generate === 'function') ||
+            (commonModule && typeof commonModule.generate === 'function')
+          ) {
+            const openFromHere = openAfterWrite;
+            // if openAfterWrite is true and there are subModules, only open the last one
+            const openFile = openFromHere && (subIndex === lastSubIndex);
+
+            const isModule = !['functions','interface','parentModule'].includes(subKey);
+
+            let parentModulePath = false;
+
+            if (isModule) {
+              const folderPath = folder.fsPath;
+              const folderName = syntax.getName(folderPath);
+              const includesFolder = fileUtil.getDirectory(folderPath);
+              parentModulePath = `${includesFolder}/class-${folderName}.php`;
+            }
+
+            if (ptModule) {
+              ptModule.generate(folder, openFile, parentModulePath);
+            } else {
+              commonModule.generate(folder, openFile, parentModulePath);
+            }
+          } else {
+            prompts.errorMessage(`No generator found for ${selected} - ${subKey}.`);
+          }
+        });
+      } else {
+        // If the option generates a single file
+        const moduleKey = moduleKeyOrObject;
+
+        const ptModule   = modules[moduleKey];
+        let commonModule = {};
+        if (!ptModule) commonModule = commonModules[moduleKey];
+
+        if (
+          (ptModule && typeof ptModule.generate === 'function') ||
+          (commonModule && typeof commonModule.generate === 'function')
+        ) {
+          const isModule = !['functions','interface','parentModule'].includes(moduleKey);
+
+          let parentModulePath = false;
+          if (isModule) {
+            const folderName = syntax.getName(folder);
+            const includesFolder = fileUtil.getDirectory(folder);
+            parentModulePath = `${includesFolder}/class-${folderName}.php`;
+          }
+
+          if (ptModule) {
+            ptModule.generate(folder, true, parentModulePath);
+          } else {
+            commonModule.generate(folder, true, parentModulePath);
+          }
+        } else {
+          prompts.errorMessage(`No generator found for ${selected}.`);
+        }
       }
-
-      // Read the template content
-      const templateContent = fs.readFileSync(templateFilePath, 'utf8');
-
-      // Write the content to the target file
-      fs.writeFileSync(targetFilePath, templateContent);
-
-      vscode.window.showInformationMessage(`Generated ${fileName} for Post Type successfully!`);
     });
   });
 }

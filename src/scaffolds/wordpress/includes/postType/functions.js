@@ -9,11 +9,11 @@ const filePath = function (file) {
 const fileContent = function (file) {
   const folderName = syntax.getName(file);
 
-  const pluralName  = folderName;
+  const pluralName  = format.toPlural(folderName);
   const pluralSnake = format.toLowAndSnake(pluralName);
   const pluralRef   = format.toLowAndSpaces(pluralName);
   const pluralTitle = format.toCapsAndSpaces(pluralName);
-  const pluralClass = format.toCapsAndSnake(pluralName);
+  const className = format.toCapsAndSnake(folderName);
 
   const singleName  = format.toSingular(folderName);
   const singleSnake = format.toLowAndSnake(singleName);
@@ -27,11 +27,11 @@ const fileContent = function (file) {
  * 
  * Functions specific to ${singleRef} handling.
  *
- * @package Theme/${pluralClass}
+ * @package Theme/${className}
  * @version 1.0.0
  */
 
-use Useful_Group\\Includes\\${pluralClass}\\${singleClass};
+use Useful_Group\\Includes\\${className}\\${singleClass};
 
 //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 // ✅ Get ${pluralTitle} Page Link

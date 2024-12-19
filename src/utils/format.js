@@ -1,9 +1,9 @@
 const toCapsAndSpaces = function (string) {
-  return string.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+  return string.replace(/[-_]/g, " ").replace(/\b\w/g, l => l.toUpperCase());
 }
 
 const toLowAndSpaces = function (string) {
-  return string.toLowerCase().replace(/-/g, " ");
+  return string.toLowerCase().replace(/[-_]/g, " ");
 }
 
 const toCapsAndSnake = function (string) {
@@ -50,6 +50,9 @@ const toSingular = function (string) {
 }
 
 const toPlural = function (string) {
+  // If ends with 's' but not 'ss' assume already plural
+  if (string.endsWith('s') && !string.endsWith('ss')) return string;
+
   if (string.endsWith('y')) {
     return string.slice(0, -1) + 'ies';
   }
@@ -65,6 +68,34 @@ const toPlural = function (string) {
   }
 }
 
+const alignByEqualSign = (items, leftCallback, rightCallback) => {
+  if (!items || !items.length) return '';
+  
+  // Apply callbacks to transform left and right properties
+  const transformed = items.map(item => {
+    return {
+      left: leftCallback(item),
+      right: rightCallback(item)
+    };
+  });
+
+  // Determine the longest left string length
+  const longestLeftLength = transformed.reduce((max, item) => {
+    return Math.max(max, item.left.length);
+  }, 0);
+
+  // Build the aligned lines
+  const lines = transformed.map(item => {
+    // Pad the left side so all equals signs line up
+    const leftPadded = item.left.padEnd(longestLeftLength, ' ');
+    return `${leftPadded} = ${item.right}`;
+  });
+
+  // Join lines with a newline character
+  return lines.join('\n');
+}
+
+
 module.exports = {
   toCapsAndSpaces,
   toLowAndSpaces,
@@ -75,5 +106,6 @@ module.exports = {
   toKebab,
   toFirstLetter,
   toSingular,
-  toPlural
+  toPlural,
+  alignByEqualSign
 }

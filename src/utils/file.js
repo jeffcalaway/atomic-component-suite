@@ -1,5 +1,6 @@
 const vscode = require('vscode');
 const fs     = require('fs');
+const path   = require('path');
 
 const open = function (filePath) {
   vscode.workspace.openTextDocument(filePath).then(document => {
@@ -26,11 +27,43 @@ const read = function (filePath) {
   return fs.readFileSync(filePath, 'utf8');
 }
 
+const write = function (filePath, content) {
+  return fs.writeFileSync(filePath, content, 'utf8');
+}
+
 const exists = function (filePath) {
   return fs.existsSync(filePath);
 }
 
+// Get all files in a given directory
+const getFiles = function (source) {
+  if (typeof source === 'object' && source.fsPath) {
+    source = source.fsPath;
+  }
+
+  try {
+      return fs.readdirSync(source, { withFileTypes: true })
+          .filter(dirent => dirent.isFile())
+          .map(dirent => dirent.name);
+  } catch (error) {
+      console.error(`Error reading files from ${source}:`, error);
+      return [];
+  }
+}
+
+const getDirectory = function (source) {
+  if (typeof source === 'object' && source.fsPath) {
+    source = source.fsPath;
+  }
+
+  return path.dirname(source);
+}
+
 const getDirectories = function (source) {
+  if (typeof source === 'object' && source.fsPath) {
+    source = source.fsPath;
+  }
+
   try {
       return fs.readdirSync(source, { withFileTypes: true })
           .filter(dirent => dirent.isDirectory())
@@ -67,11 +100,35 @@ const getProps = function (filePath) {
   }
 }
 
+const getRootPath = () => {
+  return path.dirname(path.dirname(__dirname));
+}
+
+const getAssetsPath = (folderPath = '') => {
+ return path.join(getRootPath(), `assets`, folderPath);
+}
+
+const getAsset = (file, folderPath = 'images') => {
+  const assetsPath = getAssetsPath(folderPath);
+  return path.join(assetsPath, file);
+}
+
+const isImage = (file) => {
+  return /\.(gif|jpe?g|tiff?|png|webp|bmp|svg)$/i.test(file);
+}
+
 module.exports = {
   create,
   open,
   read,
+  write,
   exists,
+  getFiles,
+  getDirectory,
   getDirectories,
-  getProps
+  getProps,
+  getRootPath,
+  getAssetsPath,
+  getAsset,
+  isImage
 }

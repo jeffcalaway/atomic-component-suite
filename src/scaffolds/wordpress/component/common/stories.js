@@ -123,18 +123,21 @@ const fileContent = function (file, storyContext) {
                 const storyTitle = story.title;
                 const storyProps = storyContext.stories[storyKey];
             
-                const storyArgs = storyProps.map(prop => {
+                let storyArgs = storyProps.map(prop => {
                     const propName       = prop.propName;
                     const propNamePadded = `'${propName}'`.padEnd(longestPropNameLength + 2);
-                    return `            ${propNamePadded} => null,`;
-                });
+                    return `\n            ${propNamePadded} => null`;
+                }).join(',');
+                
+                if (!storyArgs || !storyArgs.length) {
+                    storyArgs = '\n            ';
+                }
             
                 return `
-            $${storyKey} = $this->add_story('${storyTitle}', [$this, 'template']);
-            $${storyKey}->args([
-    ${storyArgs}
-            ]);`;
-            }).join('\n');
+        $${storyKey} = $this->add_story('${storyTitle}', [$this, 'template']);
+        $${storyKey}->args([${storyArgs}
+        ]);`;
+        }).join('\n');
         }
     }
 

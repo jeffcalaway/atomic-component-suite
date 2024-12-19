@@ -1,6 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const file = require('./file');
+const format = require('./format');
+const prompts = require('./prompts');
+const moduleUtil = require('./module');
 
 // Generic function to process a directory and generate exports
 const processDirectory = (directoryPath = null, defaultDirectoryName = null) => {
@@ -15,7 +18,7 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
         // Handle folders
         const indexPath = path.join(targetPath, 'index.js');
 
-        if (fs.existsSync(indexPath)) {
+        if (file.exists(indexPath)) {
           const moduleExports = require(indexPath);
 
           Object.entries(moduleExports).forEach(([key, value]) => {
@@ -28,27 +31,45 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
               
               exports[targetName][key] = {
                 ...value,
-                generate: async (folder, openAfterWrite = false) => {
-                  const outputFilePath = getFilePath(folder);
+                generate: async (folder, openAfterWrite = false, moduleFilePathToAddTo = false) => {
                   let prompt;
                   if (typeof runFilePrompt === 'function') {
                     prompt = await runFilePrompt(folder);
                   }
-                  const outputContent = getFileContent(folder, prompt);
-              
-                  if (outputFilePath && outputContent) {
-                    file.create(outputFilePath, outputContent, openAfterWrite);
+
+                  const outputFilePath = getFilePath(folder, prompt);
+                  const fileName       = outputFilePath.split('/').pop();
+
+                  if (!file.exists(outputFilePath)) {
+                    const outputContent = getFileContent(folder, prompt);
+                
+                    if (outputFilePath && outputContent) {
+                      file.create(outputFilePath, outputContent, openAfterWrite);
+                      prompts.fileCreated(outputFilePath);
+
+                      if (moduleFilePathToAddTo) {
+                        const addToParent = await prompts.confirm(`Would you like to add "${fileName}" to the parent module?`, {modal: true});
+    
+                        if (addToParent == 'Yes') {
+                          moduleUtil.addToParentModule(moduleFilePathToAddTo, outputFilePath);
+                        }
+                      }
+                      return true;
+                    } else {
+                      prompts.errorMessage(`Missing filePath or fileContent in export: ${key}`);
+                    }
                   } else {
-                    console.warn(`Missing filePath or fileContent in export: ${key}`);
+                    prompts.notification(`Skipped ${fileName}. File already exists.`);
+                    return false;
                   }
                 }
               };
             } else {
-              console.warn(`File ${targetName} does not export filePath or fileContent as functions.`);
+              prompts.errorMessage(`File ${targetName} does not export filePath or fileContent as functions.`);
             }
           });
         } else {
-          console.warn(`No index.js found in folder: ${targetName}`);
+          prompts.errorMessage(`No index.js found in folder: ${targetName}`);
         }
       } else if (dirent.isFile() && dirent.name.endsWith('.js')) {
         // Handle files
@@ -57,24 +78,46 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
         if (typeof getFilePath === 'function' && typeof getFileContent === 'function') {
           exports[targetName] = {
             ...require(targetPath),
-            generate: async (folder, openAfterWrite = false) => {
-              // File-based generate logic
-              const outputFilePath = getFilePath(folder);
+            generate: async (folder, openAfterWrite = false, moduleFilePathToAddTo = false) => {
               let prompt;
               if (typeof runFilePrompt === 'function') {
                 prompt = await runFilePrompt(folder);
               }
-              const outputContent = getFileContent(folder, prompt);
 
-              if (outputFilePath && outputContent) {
-                file.create(outputFilePath, outputContent, openAfterWrite);
+              // File-based generate logic
+              const outputFilePath = getFilePath(folder, prompt);
+              const fileName       = outputFilePath.split('/').pop();
+
+              if (!file.exists(outputFilePath)) {
+                const outputContent = getFileContent(folder, prompt);
+
+                if (outputFilePath && outputContent) {
+                  file.create(outputFilePath, outputContent, openAfterWrite);
+                  
+                  prompts.fileCreated(outputFilePath);
+
+                  const fileNiceName = format.toCapsAndSpaces(fileName.replace('class-','').replace('.php', ''));
+
+                  if (moduleFilePathToAddTo) {
+                    const addToParent = await prompts.confirm(`Would you like to add "${fileNiceName}" to the parent module?`, {modal: true});
+
+                    if (addToParent == 'Yes') {
+                      moduleUtil.addToParentModule(moduleFilePathToAddTo, outputFilePath);
+                    }
+                  }
+
+                  return true;
+                } else {
+                  prompts.errorMessage(`Missing filePath or fileContent in file: ${targetName}`);
+                }
               } else {
-                console.warn(`Missing filePath or fileContent in file: ${targetName}`);
+                prompts.notification(`Skipped ${fileName}. File already exists.`);
+                return false;
               }
             }
           };
         } else {
-          console.warn(`File ${targetName} does not export filePath or fileContent as functions.`);
+          prompts.errorMessage(`File ${targetName} does not export filePath or fileContent as functions.`);
         }
       }
 

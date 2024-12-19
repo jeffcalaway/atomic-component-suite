@@ -31,7 +31,6 @@ class Setup extends Library\\Package {
     }
 
     
-
 }`;
 }
 

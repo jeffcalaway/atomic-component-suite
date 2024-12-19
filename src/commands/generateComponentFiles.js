@@ -51,13 +51,11 @@ function generateComponentFiles(folder) {
             prompts.errorMessage(`No generator found for ${selected} - ${subKey}.`);
           }
         });
-        prompts.notification(`Generated ${selected} successfully!`);
       } else {
         // If the option generates a single file
         const componentKey = componentKeyOrObject;
         if (components[componentKey] && typeof components[componentKey].generate === 'function') {
           components[componentKey].generate(folder, openAfterWrite);
-          prompts.notification(`Generated ${selected} successfully!`);
         } else {
           prompts.errorMessage(`No generator found for ${selected}.`);
         }

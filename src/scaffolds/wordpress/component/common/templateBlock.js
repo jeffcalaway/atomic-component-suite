@@ -1,6 +1,6 @@
-const syntax  = require('../../../../utils/syntax');
-const prompts = require('../../../../utils/prompts');
-const fs      = require('fs');
+const syntax   = require('../../../../utils/syntax');
+const prompts  = require('../../../../utils/prompts');
+const fileUtil = require('../../../../utils/file');
 
 const filePath = function (file) {
   const folderName = syntax.getName(file);
@@ -12,24 +12,19 @@ const filePrompt = async function (file) {
   const templatePartPath = syntax.getFile(file, '.php');
   let options = [];
 
-  if (fs.existsSync(templatePartPath)) {
-    const content = fs.readFileSync(templatePartPath, 'utf8');
-    const regex = /\$props->admit_props\(\[\s*([\s\S]*?)\s*\]\)/;
-    const match = content.match(regex);
-
-    if (match) {
-      options = match[1].replace(/,\s*$/, '').split(',').map(item => {
-        const itemValue = item.trim().replace(/['"]/g, '');
-        return {
-          label: itemValue,
-          value: {
-            propName  : itemValue,
-            varName   : itemValue,
-            fieldName : itemValue
-          }
-        };
-      });
-    }
+  const props = fileUtil.getProps(templatePartPath);
+  if (props) {
+    options = props.map(prop => {
+      const propValue = prop.replace(/['"]/g, '');
+      return {
+        label: propValue,
+        value: {
+          propName  : propValue,
+          varName   : propValue,
+          fieldName : propValue
+        }
+      };
+    });
   }
 
   // check if templatePartPath has the string 'organism' in it

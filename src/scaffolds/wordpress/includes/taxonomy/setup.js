@@ -1,15 +1,30 @@
 const format = require('../../../../utils/format');
 const syntax = require('../../../../utils/syntax');
+const prompts = require('../../../../utils/prompts');
 
 const filePath = function (file) {
   const targetPath = file.fsPath;
   return `${targetPath}/class-setup.php`;
 }
 
+const filePrompt = async function () {
+    const postTypeName = await prompts.input('Enter the post type name for the taxonomy');
+
+    if (!postTypeName) {
+        const errorResponse = await prompts.errorMessage('Post type name is required', {modal:true}, 'Try Again');
+
+        if (errorResponse === 'Try Again') {
+            return filePrompt();
+        }
+    }
+
+    return postTypeName;
+}
+
 const fileContent = function (file, postTypeName) {
   const folderName = syntax.getName(file);
 
-  const pluralName  = folderName;
+  const pluralName  = format.toPlural(folderName);
   const pluralTitle = format.toCapsAndSpaces(pluralName);
   const pluralClass = format.toCapsAndSnake(pluralName);
 
@@ -17,9 +32,10 @@ const fileContent = function (file, postTypeName) {
   const singleTitle = format.toCapsAndSpaces(singleName);
 
   // Post Type Name Formats
-  const pluralPtName  = format.toPlural(postTypeName).toLowerCase();
-  const pluralPtSlug  = format.toKebab(pluralPtName);
-  const pluralPtSnake = format.toLowAndSnake(pluralPtName);
+  const pluralPtName    = format.toPlural(postTypeName);
+  const pluralLowPtName = format.toLowAndSpaces(pluralPtName);
+  const pluralPtSlug    = format.toKebab(pluralLowPtName);
+  const pluralPtSnake   = format.toLowAndSnake(pluralLowPtName);
 
   return `<?php
 /**
@@ -91,5 +107,6 @@ class Setup extends Library\\Package {
 
 module.exports = {
   filePath,
+  filePrompt,
   fileContent
 }

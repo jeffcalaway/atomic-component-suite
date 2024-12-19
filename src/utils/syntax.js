@@ -5,7 +5,13 @@ const getPath = function (file) {
 }
 
 const getName = function (file) {
-  return path.basename(getPath(file));
+  let thePath;
+  if (typeof file === 'string') {
+    thePath = path.basename(file);
+  } else {
+    thePath = getPath(file);
+  }
+  return path.basename(thePath);
 }
 
 const getDirPath = function (file) {
