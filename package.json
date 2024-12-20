@@ -35,7 +35,8 @@
     "onCommand:atomic-component-generator.generateBoilerplateFiles",
     "onCommand:atomic-component-generator.generateModuleFiles",
     "onCommand:atomic-component-generator.generatePostTypeFiles",
-    "onCommand:atomic-component-generator.generateTaxonomyFiles"
+    "onCommand:atomic-component-generator.generateTaxonomyFiles",
+    "onCommand:atomic-component-generator.addToParentModule"
 ],
 "contributes": {
 		"commands": [
@@ -58,6 +59,10 @@
 			{
 				"command": "atomic-component-generator.generateTaxonomyFiles",
 				"title": "Generate Files for a Taxonomy..."
+			},
+			{
+				"command": "atomic-component-generator.addToParentModule",
+				"title": "Add to Parent Module"
 			}
 		],
 		"submenus": [
@@ -72,6 +77,11 @@
 					"submenu": "atomic-component-generator.generateFilesMenu",
 					"group": "2_workspace@1",
 					"when": "explorerResourceIsFolder"
+				},
+				{
+					"command": "atomic-component-generator.addToParentModule",
+					"group": "2_workspace@2",
+					"when": "resourceScheme == 'file' && resourceFilename =~ /^class-.*\\.php$/ && resourcePath =~ /includes\\/[\\w-]+\\/class-.*\\.php$/"
 				}
 			],
 			"atomic-component-generator.generateFilesMenu": [

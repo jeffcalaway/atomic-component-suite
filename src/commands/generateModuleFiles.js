@@ -9,9 +9,8 @@ function generateModuleFiles(folder) {
     'Interface'       : 'interface',
     'Template Blocks' : 'templateBlocks',
     'Template Data'   : 'templateData',
-    'Hooks'           : 'hooks',
-    'Custom Class'    : 'customClass',
     'Functions'       : 'functions',
+    'Custom Class'    : 'customClass',
     'Parent Module'   : 'parentModule'
   };
 

@@ -77,29 +77,29 @@ function addToParentModule(parentFilePath, childFilePath) {
         // Step 6: Rebuild the Entire File Using the Template
         // -----------------------------------------------------------
         const newContent = `<?php
-  
-  namespace Useful_Group\\Includes;
-      use Useful_Framework\\Library;
-  
-  class ${parentClassName} extends Library\\Master {
-  
-  ${publicVariablesSection}
-  
-      public function initialize() {
-          parent::initialize();
-      }
-  
-      public function __construct() {
-          parent::__construct();
-  
-  ${initializationsSection}
-  
-          add_modules([
-  ${modulesSection}
-          ]);
-      }
-  }
-  `;
+
+namespace Useful_Group\\Includes;
+    use Useful_Framework\\Library;
+
+class ${parentClassName} extends Library\\Master {
+
+${publicVariablesSection}
+
+    public function initialize() {
+        parent::initialize();
+    }
+
+    public function __construct() {
+        parent::__construct();
+
+${initializationsSection}
+
+        add_modules([
+${modulesSection}
+        ]);
+    }
+}
+`;
   
         // -----------------------------------------------------------
         // Step 7: Write the Updated Content
@@ -115,7 +115,7 @@ function addToParentModule(parentFilePath, childFilePath) {
         // Notify of any errors
         prompts.errorMessage(`Error in addToParent: ${error.message}`);
     }
-  }
+}
 
 module.exports = {
   addToParentModule
