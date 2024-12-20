@@ -1,5 +1,6 @@
 const format = require('../../../../utils/format');
 const syntax = require('../../../../utils/syntax');
+const fileUtil = require('../../../../utils/file');
 
 const filePath = function (file) {
     const targetPath = file.fsPath;
@@ -27,6 +28,8 @@ const fileContent = function (file, postTypeName) {
   const pluralPtLowName  = format.toLowAndSpaces(pluralPtName);
   const pluralPtLowSnake = format.toLowAndSnake(pluralPtName);
 
+  const projectNamespace = fileUtil.getProjectNamespace(file);
+
   return `<?php
 /**
  * ${singleTitle} Functions
@@ -37,7 +40,7 @@ const fileContent = function (file, postTypeName) {
  * @version 1.0.0
  */
 
-use Useful_Group\\Includes\\${pluralClass}\\${singleClass};
+use ${projectNamespace}\\Includes\\${pluralClass}\\${singleClass};
 
 //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 // ✅ Get ${pluralTitle} Page Link

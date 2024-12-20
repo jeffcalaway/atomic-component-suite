@@ -35,6 +35,7 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
                   let prompt;
                   if (typeof runFilePrompt === 'function') {
                     prompt = await runFilePrompt(folder);
+                    if (prompt === undefined) return;
                   }
 
                   const outputFilePath = getFilePath(folder, prompt);
@@ -82,6 +83,7 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
               let prompt;
               if (typeof runFilePrompt === 'function') {
                 prompt = await runFilePrompt(folder);
+                if (prompt === undefined) return;
               }
 
               // File-based generate logic

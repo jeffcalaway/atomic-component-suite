@@ -54,6 +54,8 @@ const fileContent = function (file, modules = []) {
   const pluralName  = folderName;
   const pluralClass = format.toCapsAndSnake(pluralName);
 
+  const projectNamespace = fileUtil.getProjectNamespace(file);
+
   // Generate properties lines
   const properties = modules.map(module => {
     const lowerSnake = format.toLowAndSnake(module);
@@ -90,7 +92,7 @@ const fileContent = function (file, modules = []) {
 
   return `<?php
 
-namespace Useful_Group\\Includes;
+namespace ${projectNamespace}\\Includes;
       use Useful_Framework\\Library;
 
 class ${pluralClass} extends Library\\Master {

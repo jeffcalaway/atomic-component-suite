@@ -10,51 +10,47 @@ const filePath = function (file) {
 }
 
 const filePrompt = async function (file) {
-  const templatePartPath = syntax.getFile(file, '.php');
-  let options = [];
+    const templatePartPath = syntax.getFile(file, '.php');
+    let options = [];
 
-  if (fileUtil.exists(templatePartPath)) {
-    const content = fileUtil.read(templatePartPath);
-    const regex = /\$props->admit_props\(\[\s*([\s\S]*?)\s*\]\)/;
-    const match = content.match(regex);
+    let props = fileUtil.getProps(templatePartPath);
+  
+    if (!props || !props.length) return;
 
-    if (match[1] !== null && match[1] !== undefined && match[1] !== '') {
-      options = match[1].replace(/,\s*$/, '').split(',').map(item => {
+    options = props.map(item => {
         const itemValue = item.trim().replace(/['"]/g, '');
         return {
-          label: itemValue,
-          value: {
+        label: itemValue,
+        value: {
             propName  : itemValue,
             varName   : itemValue,
             fieldName : itemValue
-          }
+        }
         };
-      });
-    }
-  }
+    });
 
-  if (!options.length) return;
+    if (!options.length) return;
 
-  const selectedPropOptions = await prompts.pickMany(
+    const selectedPropOptions = await prompts.pickMany(
     options,
     'Setup Default Story',
     'Select which props to use for the default story'
-  );
+    );
 
-  if (!selectedPropOptions) return;
+    if (!selectedPropOptions) return;
 
-  const context = {};
+    const context = {};
 
-  // get only the value of the options
-  context.defaultProps = selectedPropOptions.map(option => option.value);
+    // get only the value of the options
+    context.defaultProps = selectedPropOptions.map(option => option.value);
 
-  let createStories = await prompts.confirm('Would you like to setup additional stories now?', {
+    let createStories = await prompts.confirm('Would you like to setup additional stories now?', {
     modal: true
-  });
+    });
 
-  context.stories = [];
+    context.stories = [];
 
-  while (true) {
+    while (true) {
     if (createStories == 'Yes') {
         const storyName = await prompts.input('Enter the name of the story');
         if (!storyName) break; // Exit the loop if no story name is provided
@@ -63,17 +59,17 @@ const filePrompt = async function (file) {
             title: storyName,
             key: storyKey
         });
-  
+
         const storyProps = await prompts.pickMany(
             options,
             `Setup ${storyName} Story`,
             `Select which props to use for the ${storyName} story`
         );
-    
+
         if (storyProps) {
             context.stories[storyKey] = storyProps.map(option => option.value);
         }
-    
+
         createStories = await prompts.confirm('Create another story?', {
             modal: true
         });

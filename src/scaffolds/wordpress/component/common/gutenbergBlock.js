@@ -12,25 +12,21 @@ const filePrompt = async function (file) {
   const templatePartPath = syntax.getFile(file, '.php');
   let options = [];
 
-  if (fileUtil.exists(templatePartPath)) {
-    const content = fileUtil.read(templatePartPath);
-    const regex = /\$props->admit_props\(\[\s*([\s\S]*?)\s*\]\)/;
-    const match = content.match(regex);
+  let props = fileUtil.getProps(templatePartPath);
 
-    if (match[1] !== null && match[1] !== undefined && match[1] !== '') {
-      options = match[1].replace(/,\s*$/, '').split(',').map(item => {
-        const itemValue = item.trim().replace(/['"]/g, '');
-        return {
-          label: itemValue,
-          value: {
-            propName  : itemValue,
-            varName   : itemValue,
-            fieldName : itemValue
-          }
-        };
-      });
-    }
-  }
+  if (!props || !props.length) return;
+
+  options = props.map(item => {
+    const itemValue = item.trim().replace(/['"]/g, '');
+    return {
+      label: itemValue,
+      value: {
+        propName  : itemValue,
+        varName   : itemValue,
+        fieldName : itemValue
+      }
+    };
+  });
 
   // check if templatePartPath has the string 'organism' in it
   if (templatePartPath.includes('organism')) {
@@ -55,6 +51,8 @@ const filePrompt = async function (file) {
     'Generate Gutenberg Block',
     'Select which props you would like to pass',
   );
+
+  if (selected === undefined) return undefined;
 
   if (!selected) return;
 

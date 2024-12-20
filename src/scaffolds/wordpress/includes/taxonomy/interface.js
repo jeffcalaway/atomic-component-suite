@@ -1,5 +1,6 @@
 const format = require('../../../../utils/format');
 const syntax = require('../../../../utils/syntax');
+const fileUtil = require('../../../../utils/file');
 
 const filePath = function (file) {
     const folderName   = syntax.getName(file);
@@ -25,6 +26,8 @@ const fileContent = function (file, postTypeName) {
   const pluralPtName   = format.toPlural(postTypeName);
   const pluralPtSnake  = format.toLowAndSnake(pluralPtName);
 
+  const projectNamespace = fileUtil.getProjectNamespace(file);
+
   return `<?php
     /**
      * ${singleTitle}
@@ -33,7 +36,7 @@ const fileContent = function (file, postTypeName) {
      * @version 1.0.0
      */
     
-    namespace Useful_Group\\Includes\\${pluralClass};
+    namespace ${projectNamespace}\\Includes\\${pluralClass};
     
     class ${singleClass} {
     

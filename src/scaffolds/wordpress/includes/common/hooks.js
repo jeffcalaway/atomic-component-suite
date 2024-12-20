@@ -1,5 +1,6 @@
 const format = require('../../../../utils/format');
 const syntax = require('../../../../utils/syntax');
+const fileUtil = require('../../../../utils/file');
 
 const filePath = function (file) {
   const targetPath = file.fsPath;
@@ -13,6 +14,8 @@ const fileContent = function (file) {
   const pluralTitle = format.toCapsAndSpaces(pluralName);
   const pluralClass = format.toCapsAndSnake(pluralName);
 
+  const projectNamespace = fileUtil.getProjectNamespace(file);
+
   return `<?php
 /**
  * ${pluralTitle} Hooks
@@ -21,7 +24,7 @@ const fileContent = function (file) {
  * @version 1.0.0
  */
 
-namespace Useful_Group\\Includes\\${pluralClass};
+namespace ${projectNamespace}\\Includes\\${pluralClass};
       use Useful_Framework\\Library;
 
 class Hooks extends Library\\Package {

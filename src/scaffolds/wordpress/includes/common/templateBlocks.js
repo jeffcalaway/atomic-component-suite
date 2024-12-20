@@ -1,5 +1,6 @@
 const format = require('../../../../utils/format');
 const syntax = require('../../../../utils/syntax');
+const fileUtil = require('../../../../utils/file');
 
 const filePath = function (file) {
   const targetPath = file.fsPath;
@@ -12,6 +13,8 @@ const fileContent = function (file) {
   const pluralName  = folderName;
   const pluralClass = format.toCapsAndSnake(pluralName);
 
+  const projectNamespace = fileUtil.getProjectNamespace(file);
+
   return `<?php
 /**
  * Template Blocks
@@ -22,7 +25,7 @@ const fileContent = function (file) {
  * @version 1.0.0
  */
 
-namespace Useful_Group\\Includes\\${pluralClass};
+namespace ${projectNamespace}\\Includes\\${pluralClass};
       use Useful_Framework\\Library;
 
 class Template_Blocks extends Library\\Package {

@@ -1,6 +1,7 @@
 const format = require('../../../../utils/format');
 const syntax = require('../../../../utils/syntax');
 const prompts = require('../../../../utils/prompts');
+const fileUtil = require('../../../../utils/file');
 
 const filePath = function (file) {
   const targetPath = file.fsPath;
@@ -37,6 +38,8 @@ const fileContent = function (file, postTypeName) {
   const pluralPtSlug    = format.toKebab(pluralLowPtName);
   const pluralPtSnake   = format.toLowAndSnake(pluralLowPtName);
 
+  const projectNamespace = fileUtil.getProjectNamespace(file);
+
   return `<?php
 /**
  * ${pluralTitle} Setup
@@ -48,7 +51,7 @@ const fileContent = function (file, postTypeName) {
  * @version 1.0.0
  */
   
-namespace Useful_Group\\Includes\\${pluralClass};
+namespace ${projectNamespace}\\Includes\\${pluralClass};
       use Useful_Framework\\Library;
   
 class Setup extends Library\\Package {

@@ -62,6 +62,8 @@ const fileContent = function (file, icon) {
   const singleName  = format.toSingular(folderName);
   const singleTitle = format.toCapsAndSpaces(singleName);
 
+  const projectNamespace = fileUtil.getProjectNamespace(file);
+
   return `<?php
 /**
  * ${pluralTitle} Setup
@@ -73,7 +75,7 @@ const fileContent = function (file, icon) {
  * @version 1.0.0
  */
 
-namespace Useful_Group\\Includes\\${className};
+namespace ${projectNamespace}\\Includes\\${className};
       use Useful_Framework\\Library;
 
 class Setup extends Library\\Package {

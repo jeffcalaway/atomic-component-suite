@@ -1,5 +1,6 @@
 const format = require('../../../../utils/format');
 const syntax = require('../../../../utils/syntax');
+const fileUtil = require('../../../../utils/file');
 
 const filePath = function (file) {
     const folderName   = syntax.getName(file);
@@ -19,6 +20,8 @@ const fileContent = function (file) {
   const singleTitle = format.toCapsAndSpaces(singleName);
   const singleClass = format.toCapsAndSnake(singleName);
 
+  const projectNamespace = fileUtil.getProjectNamespace(file);
+
   return `<?php
 /**
  * ${singleTitle}
@@ -27,7 +30,7 @@ const fileContent = function (file) {
  * @version 1.0.0
  */
 
-namespace Useful_Group\\Includes\\${pluralClass};
+namespace ${projectNamespace}\\Includes\\${pluralClass};
 
 class ${singleClass} {
 

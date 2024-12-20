@@ -1,5 +1,6 @@
-const format = require('../../../../utils/format');
-const syntax = require('../../../../utils/syntax');
+const format   = require('../../../../utils/format');
+const syntax   = require('../../../../utils/syntax');
+const fileUtil = require('../../../../utils/file');
 
 const filePath = function (file) {
     const targetPath = file.fsPath;
@@ -18,6 +19,8 @@ const fileContent = function (file) {
   const singleTitle = format.toCapsAndSpaces(singleName);
   const singleClass = format.toCapsAndSnake(singleName);
 
+  const projectNamespace = fileUtil.getProjectNamespace(file);
+
   return `<?php
 /**
  * ${singleTitle} Functions
@@ -28,7 +31,7 @@ const fileContent = function (file) {
  * @version 1.0.0
  */
 
-use Useful_Group\\Includes\\${pluralClass}\\${singleClass};
+use ${projectNamespace}\\Includes\\${pluralClass}\\${singleClass};
 
 //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 // ✅ Check If Is ${singleTitle}
