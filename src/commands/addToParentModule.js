@@ -1,6 +1,6 @@
-const prompts    = require('../utils/prompts');
-const moduleUtil = require('../utils/module');
-const path       = require('path');
+const prompts = require('../utils/prompts');
+const theme   = require('../utils/theme');
+const path    = require('path');
 
 const addToParentModule = async (uri) => {
   if (!uri || !uri.fsPath) {
@@ -15,7 +15,7 @@ const addToParentModule = async (uri) => {
   const parentFileName   = `class-${parentFolderName}.php`;
   const parentFilePath   = path.join(parentDir, parentFileName);
 
-  moduleUtil.addToParentModule(parentFilePath, childFilePath);
+  theme.addToParentModule(parentFilePath, childFilePath);
 }
 
 module.exports = addToParentModule;

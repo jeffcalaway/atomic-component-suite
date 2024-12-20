@@ -36,7 +36,8 @@
     "onCommand:atomic-component-generator.generateModuleFiles",
     "onCommand:atomic-component-generator.generatePostTypeFiles",
     "onCommand:atomic-component-generator.generateTaxonomyFiles",
-    "onCommand:atomic-component-generator.addToParentModule"
+    "onCommand:atomic-component-generator.addToParentModule",
+	"onCommand:atomic-component-generator.addToProjectHandler"
 ],
 "contributes": {
 		"commands": [
@@ -63,6 +64,10 @@
 			{
 				"command": "atomic-component-generator.addToParentModule",
 				"title": "Add to Parent Module"
+			},
+			{
+				"command": "atomic-component-generator.addToThemeFunctions",
+				"title": "Add to Theme Functions"
 			}
 		],
 		"submenus": [
@@ -82,6 +87,11 @@
 					"command": "atomic-component-generator.addToParentModule",
 					"group": "2_workspace@2",
 					"when": "resourceScheme == 'file' && resourceFilename =~ /^class-.*\\.php$/ && resourcePath =~ /includes\\/[\\w-]+\\/class-.*\\.php$/"
+				},
+				{
+					"command": "atomic-component-generator.addToThemeFunctions",
+					"group": "2_workspace@2",
+					"when": "(resourceScheme == 'file' && resourceFilename =~ /^class-.*\\.php$/ && resourcePath =~ /includes\\/class-.*\\.php$/) || (resourceScheme == 'file' && resourceFilename == 'functions.php' && resourcePath =~ /includes\\/[\\w-]+\\/functions\\.php$/)"
 				}
 			],
 			"atomic-component-generator.generateFilesMenu": [

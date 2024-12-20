@@ -23,7 +23,7 @@ const filePrompt = async function (file) {
   });
 
   const options = acceptableFiles.map(file => {
-    const fileName = file.replace('class-', '').replace('.php', '');
+    const fileName = format.removeClassAndPhp(file);
     const label = format.toCapsAndSpaces(fileName);
     const value = format.toLowAndSnake(fileName);
     return {

@@ -199,5 +199,6 @@ module.exports = {
   getAssetsPath,
   getAsset,
   isImage,
+  getProjectPath,
   getProjectNamespace
 }

@@ -95,6 +95,10 @@ const alignByEqualSign = (items, leftCallback, rightCallback) => {
   return lines.join('\n');
 }
 
+const removeClassAndPhp = (string) => {
+  return string.replace('class-', '').replace('.php', '');
+}
+
 
 module.exports = {
   toCapsAndSpaces,
@@ -107,5 +111,6 @@ module.exports = {
   toFirstLetter,
   toSingular,
   toPlural,
-  alignByEqualSign
+  alignByEqualSign,
+  removeClassAndPhp
 }

@@ -3,7 +3,7 @@ const path = require('path');
 const file = require('./file');
 const format = require('./format');
 const prompts = require('./prompts');
-const moduleUtil = require('./module');
+const theme = require('./theme');
 
 // Generic function to process a directory and generate exports
 const processDirectory = (directoryPath = null, defaultDirectoryName = null) => {
@@ -52,7 +52,7 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
                         const addToParent = await prompts.confirm(`Would you like to add "${fileName}" to the parent module?`, {modal: true});
     
                         if (addToParent == 'Yes') {
-                          moduleUtil.addToParentModule(moduleFilePathToAddTo, outputFilePath);
+                          theme.addToParentModule(moduleFilePathToAddTo, outputFilePath);
                         }
                       }
                       return true;
@@ -104,7 +104,7 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
                     const addToParent = await prompts.confirm(`Would you like to add "${fileNiceName}" to the parent module?`, {modal: true});
 
                     if (addToParent == 'Yes') {
-                      moduleUtil.addToParentModule(moduleFilePathToAddTo, outputFilePath);
+                      theme.addToParentModule(moduleFilePathToAddTo, outputFilePath);
                     }
                   }
 
