@@ -2,6 +2,7 @@ const format   = require('../../../../utils/format');
 const syntax   = require('../../../../utils/syntax');
 const prompts  = require('../../../../utils/prompts');
 const fileUtil = require('../../../../utils/file');
+const theme    = require('../../../../utils/theme');
 
 const filePath = function (file) {
     const pluralName = syntax.getName(file);
@@ -44,6 +45,16 @@ const filePrompt = async function (file) {
 
   // get only the value of the selected options
   const selectedValues = selected.map(option => option.value);
+
+  const filePath = syntax.getPath(file);
+  const fileName = syntax.getName(filePath);
+  const fileTitle = format.removeClassAndPhp(fileName);
+
+  const addToThemeFunctions = await prompts.confirm(`Would you like to add "${fileTitle} parent module initialization" to the Theme Functions file?`, {modal: true});
+          
+  if (addToThemeFunctions == 'Yes') {
+      theme.addToThemeFunctions(`${filePath}.php`);
+  }
 
   return selectedValues;
 }
