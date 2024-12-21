@@ -56,7 +56,12 @@ function generateModuleFiles(folder) {
               const folderName = syntax.getName(folderPath);
               const includesFolder = fileUtil.getDirectory(folderPath);
               parentModulePath = `${includesFolder}/class-${folderName}.php`;
+
+              if (!fileUtil.exists(parentModulePath) && !includesParentModule) {
+                parentModulePath = false;
+              }
             }
+            
             modules[subModule].generate(folder, openFile, parentModulePath);
           } else {
             prompts.errorMessage(`No generator found for ${selected} - ${subKey}.`);
@@ -70,11 +75,17 @@ function generateModuleFiles(folder) {
           const isModule = !['functions','interface','parentModule'].includes(moduleKey);
 
           let parentModulePath = false;
+
           if (isModule) {
             const folderName = syntax.getName(folder);
             const includesFolder = fileUtil.getDirectory(folder);
             parentModulePath = `${includesFolder}/class-${folderName}.php`;
+
+            if (!fileUtil.exists(parentModulePath) && !includesParentModule) {
+              parentModulePath = false;
+            }
           }
+          
           modules[moduleKey].generate(folder, true, parentModulePath);
         } else {
           prompts.errorMessage(`No generator found for ${selected}.`);

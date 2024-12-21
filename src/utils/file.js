@@ -147,7 +147,7 @@ function getProjectPath(file) {
 function getProjectNamespace(file) {
   const projectPath = getProjectPath(file);
   const functionsPath = path.join(projectPath, 'functions.php');
-  console.log( 'functionsPath', functionsPath );
+  
   try {
     // Resolve the absolute path to handle relative paths correctly
     const absolutePath = path.resolve(functionsPath);
