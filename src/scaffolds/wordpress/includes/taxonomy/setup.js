@@ -8,7 +8,9 @@ const filePath = function (file) {
   return `${targetPath}/class-setup.php`;
 }
 
-const filePrompt = async function () {
+const filePrompt = async function (file, passedValue = false) {
+    if (passedValue) return passedValue;
+    
     const postTypeName = await prompts.input('Enter the post type name for the taxonomy');
 
     if (!postTypeName) {
@@ -101,7 +103,7 @@ class Setup extends Library\\Package {
     }
     
     
-    public function add_taxonomy_to_${pluralPtSlug}($taxonomies) {
+    public function add_taxonomy_to_${pluralPtSnake}($taxonomies) {
         array_push( $taxonomies, '${singleName}' );
         return $taxonomies;
     }

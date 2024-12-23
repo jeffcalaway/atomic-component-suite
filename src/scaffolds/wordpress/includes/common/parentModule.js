@@ -10,53 +10,56 @@ const filePath = function (file) {
     return `${dirPath}/class-${pluralName}.php`;
 }
 
-const filePrompt = async function (file) {
-  const folderName   = syntax.getName(file);
-  const singularName = format.toSingular(folderName);
-  const interfaceFile = `class-${singularName}.php`;
+const filePrompt = async function (file, passedValue = false) {
+  let promptValue = passedValue;
 
-  // get array of file names in the directory
-  const files = fileUtil.getFiles(file);
-  const acceptableFiles = files.filter(dirFile => {
-    if (dirFile == 'functions.php') return false;
-    if (dirFile == interfaceFile) return false;
-    return true;
-  });
+  if (!passedValue) {
+    const folderName   = syntax.getName(file);
+    const singularName = format.toSingular(folderName);
+    const interfaceFile = `class-${singularName}.php`;
 
-  const options = acceptableFiles.map(file => {
-    const fileName = format.removeClassAndPhp(file);
-    const label = format.toCapsAndSpaces(fileName);
-    const value = format.toLowAndSnake(fileName);
-    return {
-      label,
-      value
-    };
-  });
+    // get array of file names in the directory
+    const files = fileUtil.getFiles(file);
+    const acceptableFiles = files.filter(dirFile => {
+      if (dirFile == 'functions.php') return false;
+      if (dirFile == interfaceFile) return false;
+      return true;
+    });
 
-  if (!options.length) return;
+    const options = acceptableFiles.map(file => {
+      const fileName = format.removeClassAndPhp(file);
+      const label = format.toCapsAndSpaces(fileName);
+      const value = format.toLowAndSnake(fileName);
+      return {
+        label,
+        value
+      };
+    });
 
-  const selected = await prompts.pickMany(
-    options,
-    'Generate Parent Module',
-    'Select which modules you would like to include',
-  );
+    let selected = [];
+    if (options.length) {
+      selected = await prompts.pickMany(
+        options,
+        'Generate Parent Module',
+        'Select which modules you would like to include',
+      );
+    }
 
-  if (!selected) return;
-
-  // get only the value of the selected options
-  const selectedValues = selected.map(option => option.value);
+    // get only the value of the selected options
+    promptValue = selected.map(option => option.value);
+  }
 
   const filePath = syntax.getPath(file);
   const fileName = syntax.getName(filePath);
   const fileTitle = format.removeClassAndPhp(fileName);
 
-  const addToThemeFunctions = await prompts.confirm(`Would you like to add "${fileTitle} parent module initialization" to the Theme Functions file?`, {modal: true});
+  const addToThemeFunctions = await prompts.confirm(`Would you like to initialize the "${fileTitle} Parent Module" in the Theme Functions file?`, {modal: true});
           
   if (addToThemeFunctions == 'Yes') {
       theme.addToThemeFunctions(`${filePath}.php`);
   }
 
-  return selectedValues;
+  return promptValue;
 }
 
 const fileContent = function (file, modules = []) {

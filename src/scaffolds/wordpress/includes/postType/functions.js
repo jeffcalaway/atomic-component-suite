@@ -1,10 +1,25 @@
-const format = require('../../../../utils/format');
-const syntax = require('../../../../utils/syntax');
+const format   = require('../../../../utils/format');
+const syntax   = require('../../../../utils/syntax');
 const fileUtil = require('../../../../utils/file');
+const prompts  = require('../../../../utils/prompts');
+const theme    = require('../../../../utils/theme');
 
 const filePath = function (file) {
     const targetPath = file.fsPath;
     return `${targetPath}/functions.php`;
+}
+
+const filePrompt = async function (file) {
+    const filePath = syntax.getPath(file);
+    const pathParts = filePath.split('/');
+    const includesIndex = pathParts.indexOf('includes');
+    const folderName = pathParts[includesIndex + 1];
+
+    const addToThemeFunctions = await prompts.confirm(`Would you like to add "${folderName}’s Functions dependancy" to the Theme Functions file?`, {modal: true});
+        
+    if (addToThemeFunctions == 'Yes') {
+        theme.addToThemeFunctions(`${filePath}/functions.php`);
+    }
 }
 
 const fileContent = function (file) {
@@ -230,5 +245,6 @@ function get_${singleSnake}_thumbnail( $${singleSnake} = null ) {
 
 module.exports = {
     filePath,
+    filePrompt,
     fileContent
 }

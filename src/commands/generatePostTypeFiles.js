@@ -19,7 +19,7 @@ function generatePostTypeFiles(folder) {
     Object.keys(fileTemplates),
     'Select Post Type Files to Generate',
     'Select one or more post type files to generate'
-  ).then((selectedFiles) => {
+  ).then(async (selectedFiles) => {
     if (!selectedFiles || selectedFiles.length === 0) {
       prompts.notification('No files selected.');
       return;
@@ -33,15 +33,17 @@ function generatePostTypeFiles(folder) {
       selectedFiles.unshift('Parent Module');
     }
 
-    selectedFiles.forEach(async (selected) => {
+    for (const selected of selectedFiles) {
       const moduleKeyOrObject = fileTemplates[selected];
 
       let openAfterWrite = selected === selectedFiles[selectedFiles.length - 1];
 
       if (typeof moduleKeyOrObject === 'object') {
-        const lastSubIndex = Object.keys(moduleKeyOrObject).length - 1;
+        const subKeys = Object.keys(moduleKeyOrObject);
+        const lastSubIndex = subKeys.length - 1;
         // If the option generates multiple files
-        Object.keys(moduleKeyOrObject).forEach( async (subKey, subIndex) => {
+        for (let subIndex = 0; subIndex < subKeys.length; subIndex++) {
+          const subKey = subKeys[subIndex];
           const subModule = moduleKeyOrObject[subKey];
 
           const ptModule   = modules[subModule];
@@ -68,14 +70,18 @@ function generatePostTypeFiles(folder) {
             }
 
             if (ptModule) {
-              ptModule.generate(folder, openFile, parentModulePath);
+              await ptModule.generate(folder, openFile, parentModulePath);
+              // Force a pause
+              await new Promise(r => setTimeout(r, 300));
             } else {
-              commonModule.generate(folder, openFile, parentModulePath);
+              await commonModule.generate(folder, openFile, parentModulePath);
+              // Force a pause
+              await new Promise(r => setTimeout(r, 300));
             }
           } else {
             prompts.errorMessage(`No generator found for ${selected} - ${subKey}.`);
           }
-        });
+        }
       } else {
         // If the option generates a single file
         const moduleKey = moduleKeyOrObject;
@@ -98,15 +104,19 @@ function generatePostTypeFiles(folder) {
           }
 
           if (ptModule) {
-            ptModule.generate(folder, true, parentModulePath);
+            await ptModule.generate(folder, true, parentModulePath);
+            // Force a pause
+            await new Promise(r => setTimeout(r, 300));
           } else {
-            commonModule.generate(folder, true, parentModulePath);
+            await commonModule.generate(folder, true, parentModulePath);
+            // Force a pause
+            await new Promise(r => setTimeout(r, 300));
           }
         } else {
           prompts.errorMessage(`No generator found for ${selected}.`);
         }
       }
-    });
+    }
   });
 }
 

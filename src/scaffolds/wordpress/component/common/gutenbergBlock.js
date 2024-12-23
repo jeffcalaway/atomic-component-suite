@@ -8,7 +8,9 @@ const filePath = function (file) {
   return `${targetPath}/${folderName}.block.php`;
 }
 
-const filePrompt = async function (file) {
+const filePrompt = async function (file, passedValue = false) {
+  if (passedValue) return passedValue;
+  
   const templatePartPath = syntax.getFile(file, '.php');
   let options = [];
 

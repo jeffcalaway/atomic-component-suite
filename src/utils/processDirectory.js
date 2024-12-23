@@ -21,7 +21,7 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
         if (file.exists(indexPath)) {
           const moduleExports = require(indexPath);
 
-          Object.entries(moduleExports).forEach(([key, value]) => {
+          for (const [key, value] of Object.entries(moduleExports)) {
             const { filePath: getFilePath, filePrompt: runFilePrompt, fileContent: getFileContent } = value;
 
             if (typeof getFilePath === 'function' && typeof getFileContent === 'function') {
@@ -31,11 +31,11 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
               
               exports[targetName][key] = {
                 ...value,
-                generate: async (folder, openAfterWrite = false, moduleFilePathToAddTo = false) => {
+                generate: async (folder, openAfterWrite = false, moduleFilePathToAddTo = false, givenPromptValue = false) => {
                   let prompt;
+
                   if (typeof runFilePrompt === 'function') {
-                    prompt = await runFilePrompt(folder);
-                    if (prompt === undefined) return;
+                    prompt = await runFilePrompt(folder, givenPromptValue);
                   }
 
                   const outputFilePath = getFilePath(folder, prompt);
@@ -68,7 +68,7 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
             } else {
               prompts.errorMessage(`File ${targetName} does not export filePath or fileContent as functions.`);
             }
-          });
+          }
         } else {
           prompts.errorMessage(`No index.js found in folder: ${targetName}`);
         }
@@ -79,11 +79,12 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
         if (typeof getFilePath === 'function' && typeof getFileContent === 'function') {
           exports[targetName] = {
             ...require(targetPath),
-            generate: async (folder, openAfterWrite = false, moduleFilePathToAddTo = false) => {
+            generate: async (folder, openAfterWrite = false, moduleFilePathToAddTo = false, givenPromptValue = false) => {
               let prompt;
+
               if (typeof runFilePrompt === 'function') {
-                prompt = await runFilePrompt(folder);
-                // if (prompt === undefined) return;
+                console.log( '1. Run file prompt', givenPromptValue );
+                prompt = await runFilePrompt(folder, givenPromptValue);
               }
 
               // File-based generate logic
@@ -101,6 +102,7 @@ const processDirectory = (directoryPath = null, defaultDirectoryName = null) => 
                   const fileNiceName = format.toCapsAndSpaces(fileName.replace('class-','').replace('.php', ''));
 
                   if (moduleFilePathToAddTo) {
+                    console.log( '2. Ask about parent module' );
                     const addToParent = await prompts.confirm(`Would you like to add "${fileNiceName}" to the parent module?`, {modal: true});
 
                     if (addToParent == 'Yes') {

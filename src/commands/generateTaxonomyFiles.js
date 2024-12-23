@@ -19,10 +19,31 @@ function generateTaxonomyFiles(folder) {
     Object.keys(fileTemplates),
     'Select Taxonomy Files to Generate',
     'Select one or more taxonomy files to generate'
-  ).then((selectedFiles) => {
+  ).then(async (selectedFiles) => {
     if (!selectedFiles || selectedFiles.length === 0) {
       prompts.notification('No files selected.');
       return;
+    }
+    const asksForPostType = selectedFiles.includes('Setup') || selectedFiles.includes('Interface') || selectedFiles.includes('Functions');
+
+    let postTypeName = false;
+
+    if (asksForPostType) {
+      const askForPostType = async () => {
+        const postTypeInput = await prompts.input('Enter the post type name for the taxonomy');
+
+        if (!postTypeInput) {
+          const errorResponse = await prompts.errorMessage('Post type name is required', {modal:true}, 'Try Again');
+          
+          if (errorResponse === 'Try Again') {
+              return askForPostType();
+          }
+        }
+
+        return postTypeInput;
+      }
+      
+      postTypeName = await askForPostType();
     }
 
     const includesParentModule = selectedFiles.includes('Parent Module');
@@ -68,7 +89,7 @@ function generateTaxonomyFiles(folder) {
             }
 
             if (taxModule) {
-              taxModule.generate(folder, openFile, parentModulePath);
+              taxModule.generate(folder, openFile, parentModulePath, postTypeName);
             } else {
               commonModule.generate(folder, openFile, parentModulePath);
             }
@@ -98,7 +119,7 @@ function generateTaxonomyFiles(folder) {
           }
 
           if (taxModule) {
-            taxModule.generate(folder, true, parentModulePath);
+            taxModule.generate(folder, true, parentModulePath, postTypeName);
           } else {
             commonModule.generate(folder, true, parentModulePath);
           }

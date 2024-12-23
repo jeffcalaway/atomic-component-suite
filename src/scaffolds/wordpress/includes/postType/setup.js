@@ -8,24 +8,22 @@ const filePath = function (file) {
   return `${targetPath}/class-setup.php`;
 }
 
-const filePrompt = async function (file) {
-    const iconType = await prompts.pickOne(
-        ['Dashicons', 'Custom Asset'],
-        'Icon Type',
-        'Select the icon type for the post type.'
-    );
+const filePrompt = async function (file, passedValue = false) {
+    let icon = passedValue;
+    
+    if (!passedValue) {
+        const iconType = await prompts.pickOne(
+            ['Dashicons', 'Custom Asset'],
+            'Icon Type',
+            'Select the icon type for the post type.'
+        );
+    
+        if (!iconType) return;
 
-    if (!iconType) return;
-
-    switch (iconType) {
-        case 'Dashicons':
-            const selectedIcon = await prompts.selectDashicon('Select Dashicon', 'Select the dashicon for the post type.');
-
-            if (!selectedIcon) return `'${'dashicons-embed-post'}'`;
-
-            return `'${selectedIcon}'`;
-
-        case 'Custom Asset':
+        if (iconType === 'Dashicons') {
+            icon = await prompts.selectDashicon('Select Dashicon', 'Select the dashicon for the post type.');
+            icon = icon ? `'${icon}'` : null;
+        } else if (iconType === 'Custom Asset') {
             const folderPath = file.fsPath;
             const includesFolder = fileUtil.getDirectory(folderPath);
             const themeFolder = fileUtil.getDirectory(includesFolder);
@@ -41,15 +39,16 @@ const filePrompt = async function (file) {
             const assetsPath  = fileUtil.exists(iconsFolder) ? iconsFolder : imagesFolder;
             const getAssetPath = fileUtil.exists(iconsFolder) ? 'images/icons' : 'images';
 
-            const chosenAsset = await prompts.selectAsset(
+            icon = await prompts.selectAsset(
                 assetsPath,
                 getAssetPath,
                 'Select Image Asset',
                 'Select the icon for the post type.'
             );
-
-            return chosenAsset || `'${'dashicons-embed-post'}'`;
+        }
     }
+
+    return (icon && icon !== undefined) ? icon : `'${'dashicons-embed-post'}'`;
 }
 
 const fileContent = function (file, icon) {

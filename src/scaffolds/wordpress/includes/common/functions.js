@@ -15,7 +15,7 @@ const filePrompt = async function (file) {
     const includesIndex = pathParts.indexOf('includes');
     const folderName = pathParts[includesIndex + 1];
 
-    const addToThemeFunctions = await prompts.confirm(`Would you like to add "${folderName} functions dependancy" to the Theme Functions file?`, {modal: true});
+    const addToThemeFunctions = await prompts.confirm(`Would you like to add "${folderName}’s Functions dependancy" to the Theme Functions file?`, {modal: true});
         
     if (addToThemeFunctions == 'Yes') {
         theme.addToThemeFunctions(`${filePath}/functions.php`);

@@ -1,10 +1,41 @@
-const format = require('../../../../utils/format');
-const syntax = require('../../../../utils/syntax');
+const format   = require('../../../../utils/format');
+const syntax   = require('../../../../utils/syntax');
 const fileUtil = require('../../../../utils/file');
+const prompts  = require('../../../../utils/prompts');
+const theme    = require('../../../../utils/theme');
 
 const filePath = function (file) {
     const targetPath = file.fsPath;
     return `${targetPath}/functions.php`;
+}
+
+const filePrompt = async function (file, passedValue = false) {
+    let postTypeName = passedValue;
+
+    if (!passedValue) {
+        postTypeName = await prompts.input('Enter the post type name for the taxonomy');
+    
+        if (!postTypeName) {
+            const errorResponse = await prompts.errorMessage('Post type name is required', {modal:true}, 'Try Again');
+    
+            if (errorResponse === 'Try Again') {
+                return filePrompt();
+            }
+        }
+    }
+    
+    const filePath = syntax.getPath(file);
+    const pathParts = filePath.split('/');
+    const includesIndex = pathParts.indexOf('includes');
+    const folderName = pathParts[includesIndex + 1];
+
+    const addToThemeFunctions = await prompts.confirm(`Would you like to add "${folderName}’s Functions dependancy" to the Theme Functions file?`, {modal: true});
+        
+    if (addToThemeFunctions == 'Yes') {
+        theme.addToThemeFunctions(`${filePath}/functions.php`);
+    }
+
+    return postTypeName;
 }
 
 const fileContent = function (file, postTypeName) {
@@ -248,5 +279,6 @@ function get_${singleSnake}_${pluralPtLowSnake}( $${singleSnake} = null ) {
 
 module.exports = {
     filePath,
+    filePrompt,
     fileContent
 }

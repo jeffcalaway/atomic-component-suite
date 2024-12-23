@@ -9,7 +9,9 @@ const filePath = function (file, title) {
   return `${targetPath}/class-${fileName}.php`;
 }
 
-const filePrompt = async function () {
+const filePrompt = async function (file, passedValue = false) {
+  if (passedValue) return passedValue;
+
   return await prompts.input('Enter the title of the class');
 }
 

@@ -1,12 +1,29 @@
 const format = require('../../../../utils/format');
 const syntax = require('../../../../utils/syntax');
 const fileUtil = require('../../../../utils/file');
+const prompts = require('../../../../utils/prompts');
 
 const filePath = function (file) {
     const folderName   = syntax.getName(file);
     const singularName = format.toSingular(folderName)
     const targetPath   = file.fsPath;
     return `${targetPath}/class-${singularName}.php`;
+}
+
+const filePrompt = async function (file, passedValue = false) {
+    if (passedValue) return passedValue;
+    
+    const postTypeName = await prompts.input('Enter the post type name for the taxonomy');
+
+    if (!postTypeName) {
+        const errorResponse = await prompts.errorMessage('Post type name is required', {modal:true}, 'Try Again');
+
+        if (errorResponse === 'Try Again') {
+            return filePrompt();
+        }
+    }
+
+    return postTypeName;
 }
 
 const fileContent = function (file, postTypeName) {
@@ -110,6 +127,7 @@ const fileContent = function (file, postTypeName) {
 }
 
 module.exports = {
-  filePath,
-  fileContent
+    filePath,
+    filePrompt,
+    fileContent
 }

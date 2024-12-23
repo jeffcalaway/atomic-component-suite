@@ -1,37 +1,58 @@
 const toCapsAndSpaces = function (string) {
+  if (!string) return;
+
   return string.replace(/[-_]/g, " ").replace(/\b\w/g, l => l.toUpperCase());
 }
 
 const toLowAndSpaces = function (string) {
+  if (!string) return;
+
   return string.toLowerCase().replace(/[-_]/g, " ");
 }
 
 const toCapsAndSnake = function (string) {
+  if (!string) return;
+
   return toCapsAndSpaces(string).replace(/ /g, "_");
 }
 
 const toLowAndSnake = function (string) {
+  if (!string) return;
+
   return toLowAndSpaces(string).replace(/ /g, "_");
 }
 
 const toCapsAndCamel = function (string) {
+  if (!string) return;
+
   return toCapsAndSpaces(string).split(" ").join("");
 }
 
 const toLowAndCamel = function (string) {
+  if (!string) return;
+
   return toLowAndSpaces(string).split(" ").join("");
 }
 
-const toKebab = function (string) {
-  let noUnderscores = string.replace(/_/g, '');
-  return noUnderscores.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+function toKebab(str) {
+  if (!str) return '';
+
+  str = str.replace(/([a-z0-9])([A-Z])/g, '$1 $2');
+  str = str.replace(/[_-]/g, ' ');
+  str = str.trim().replace(/\s+/g, ' ');
+
+  return str.toLowerCase().replace(/\s+/g, '-');
 }
 
 const toFirstLetter = function (string) {
+  if (!string) return;
+
   return string.charAt(0);
 }
 
 const toSingular = function (string) {
+  if (!string) return;
+
   if (string.endsWith('ies')) {
     return string.slice(0, -3) + 'y';
   }
@@ -50,6 +71,8 @@ const toSingular = function (string) {
 }
 
 const toPlural = function (string) {
+  if (!string) return;
+
   // If ends with 's' but not 'ss' assume already plural
   if (string.endsWith('s') && !string.endsWith('ss')) return string;
 
@@ -96,6 +119,8 @@ const alignByEqualSign = (items, leftCallback, rightCallback) => {
 }
 
 const removeClassAndPhp = (string) => {
+  if (!string) return;
+  
   return string.replace('class-', '').replace('.php', '');
 }
 
