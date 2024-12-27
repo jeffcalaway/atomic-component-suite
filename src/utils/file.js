@@ -147,26 +147,37 @@ function getProjectPath(file) {
 function getProjectNamespace(file) {
   const projectPath = getProjectPath(file);
   const functionsPath = path.join(projectPath, 'functions.php');
-  
-  try {
-    // Resolve the absolute path to handle relative paths correctly
-    const absolutePath = path.resolve(functionsPath);
 
-    // Check if the file exists
-    if (!fs.existsSync(absolutePath)) {
-      console.warn(`File does not exist: ${absolutePath}`);
+  let targetPath = functionsPath;
+
+  // Check if 'functions.php' exists
+  if (!exists(functionsPath)) {
+    console.warn(`File does not exist: ${functionsPath}`);
+
+    // Get the name of the project directory
+    const projectDirName = path.basename(projectPath);
+    const alternativePath = path.join(projectPath, `${projectDirName}.php`);
+
+    // Check if the alternative PHP file exists
+    if (exists(alternativePath)) {
+      console.info(`Using alternative file: ${alternativePath}`);
+      targetPath = alternativePath;
+    } else {
+      console.warn(`Neither 'functions.php' nor '${projectDirName}.php' found in ${projectPath}.`);
       return null;
     }
+  } else {
+    console.info(`Found 'functions.php' at: ${functionsPath}`);
+  }
+
+  try {
+    // Resolve the absolute path to handle relative paths correctly
+    const absolutePath = path.resolve(targetPath);
 
     // Read the file content as UTF-8
-    const content = fs.readFileSync(absolutePath, 'utf8');
+    const content = read(absolutePath);
 
     // Regular expression to match the namespace declaration
-    // Explanation:
-    // - ^\s*         : Start of a line, followed by any whitespace
-    // - namespace\s+ : The keyword 'namespace' followed by at least one space
-    // - ([^;{]+)     : Capture group for namespace name (any characters except ';' or '{')
-    // - [;{]         : Ends with either ';' or '{'
     const namespaceRegex = /^\s*namespace\s+([^;{]+)[;{]/mi;
 
     const match = content.match(namespaceRegex);
@@ -174,13 +185,14 @@ function getProjectNamespace(file) {
     if (match && match[1]) {
       // Trim any surrounding whitespace from the captured namespace name
       const namespace = match[1].trim();
+      console.info(`Namespace found: ${namespace}`);
       return namespace;
     } else {
       console.warn(`No namespace declaration found in file: ${absolutePath}`);
       return null;
     }
   } catch (error) {
-    console.error(`Error reading namespace from ${functionsPath} (getTopNamespace):`, error);
+    console.error(`Error reading namespace from ${targetPath} (getProjectNamespace):`, error);
     return null;
   }
 }
