@@ -95,7 +95,7 @@ ${publicVariablesSection}
 
 ${initializationsSection}
 
-        add_modules([
+        $this->add_modules([
 ${modulesSection}
         ]);
     }
