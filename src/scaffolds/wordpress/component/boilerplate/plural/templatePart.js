@@ -109,7 +109,7 @@ const fileContent = function (file, component) {
         const requiredItems = component.requiredProps.map((prop) => {
             return `$item['${prop}']`;
         }).join(' && ');
-        conditionalStart  = `\n                <?php if ( ${requiredItems} ) : ?>`;
+        conditionalStart  = `\n\n                <?php if ( ${requiredItems} ) : ?>`;
         conditionalEnd    = '\n                <?php endif; ?>';
         conditionalIndent = '    ';
     }
@@ -130,7 +130,6 @@ const fileContent = function (file, component) {
 <?php if ( $items ) : ?>
     <div class="<?php echo $class; ?>">
         <ul class="${className}__list">
-
             <?php foreach ( $items as $item ) : ?>
 
                 <?php
