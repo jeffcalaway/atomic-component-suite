@@ -110,7 +110,7 @@ const fileContent = function (file, component) {
 
         if (component.requiredProps.length) {
             const requiredItems = component.requiredProps.map((prop) => {
-                return `$item['${prop}']`;
+                return `$${prop}`;
             }).join(' && ');
             conditionalStart  = `<?php if ( ${requiredItems} ) : ?>\n`;
             conditionalEnd    = '\n<?php endif; ?>';

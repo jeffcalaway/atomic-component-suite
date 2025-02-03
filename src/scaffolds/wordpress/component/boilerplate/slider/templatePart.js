@@ -119,41 +119,43 @@ const fileContent = function (file, component) {
         let conditionalStart  = '\n';
         let conditionalEnd    = '';
         let conditionalIndent = '    ';
+        const tab = dirLetter == 'o' ? '    ' : '';
 
         if (component) {
             arrayOnlyKeys = component.props.map((prop) => {
-                return `\n                            '${prop}'`;
+                return `\n${tab}                        '${prop}'`;
             }).join(',');
     
             if (component.requiredProps.length) {
                 const requiredItems = component.requiredProps.map((prop) => {
                     return `$item['${prop}']`;
                 }).join(' && ');
-                conditionalStart = `\n                    <?php if ( ${requiredItems} ) : ?>`;
-                conditionalEnd = '\n                    <?php endif; ?>';
+                conditionalStart = `\n                ${tab}<?php if ( ${requiredItems} ) : ?>`;
+                conditionalEnd = `\n                ${tab}<?php endif; ?>`;
             }
         }
 
-        list = `            <ul class="${className}__list">
+        list = `${tab}        <ul class="${className}__list">
+${tab}            <?php foreach ( $items as $item ) : ?>
 
-                <?php foreach ( $items as $item ) : ?>
+${tab}                <?php
+${tab}                    $keys = [${arrayOnlyKeys}
+${tab}                    ];
+${tab}                    $item = array_only($item, $keys, null);
+${tab}                ?>
+${conditionalStart}
+${tab}                ${conditionalIndent}<li class="${className}__item">
+${tab}                ${conditionalIndent}    <?php render_template_part('${componentTemplate}', array_merge($item, [
+${tab}                ${conditionalIndent}        'class' => '${className}__${component.elementName}'
+${tab}                ${conditionalIndent}    ])); ?>
+${tab}                ${conditionalIndent}</li>${conditionalEnd}
 
-                    <?php
-                        $keys = [${arrayOnlyKeys}
-                        ];
-                        $item = array_only($item, $keys, null);
-                    ?>${conditionalStart}
-                    ${conditionalIndent}<li class="${className}__item">
-                    ${conditionalIndent}    <?php render_template_part('${componentTemplate}', array_merge($item, [
-                    ${conditionalIndent}        'class' => '${className}__${component.elementName}'
-                    ${conditionalIndent}    ])); ?>
-                    ${conditionalIndent}</li>${conditionalEnd}
-
-                <?php endforeach; ?>
-            </ul>`;
+${tab}            <?php endforeach; ?>
+${tab}        </ul>`;
     }
-  
-    return `<?php
+
+    if (dirLetter == 'o') {
+        return `<?php
     $props->admit_props([
         'id',
         'items'
@@ -180,6 +182,25 @@ ${list}
         </div>
     </section>
 <?php endif; ?>`;
+    } else {
+        return `<?php
+    $props->admit_props([
+        'items'
+    ]);
+
+    extract($props->to_array());
+
+    $class = $props->class([
+        '${className}'
+    ]);
+?>
+
+<?php if ( $items ) : ?>
+    <div class="<?php echo $class; ?>">
+${list}
+    </div>
+<?php endif; ?>`;
+    }
 }
 
 module.exports = {
