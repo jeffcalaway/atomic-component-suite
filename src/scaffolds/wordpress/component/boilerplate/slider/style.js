@@ -13,9 +13,10 @@ const fileContent = function (file) {
   const dirLetter  = format.toFirstLetter(dirName);
 
   const className = `${dirLetter}-${folderName}`;
+  const include = dirLetter == 'o' ? '@include theme-margins;' : '';
 
   return `.${className} {
-    @include theme-margins;
+    ${include}
 }`;
 }
 
