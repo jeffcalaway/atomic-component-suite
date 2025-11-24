@@ -30,6 +30,17 @@ const filePrompt = async function (file, passedValue = false) {
     };
   });
 
+  options.push(
+    {
+      label: 'custom_class',
+      value: {
+        varName: 'custom_class',
+        propName: 'class',
+        value: 'get_block_class($block)'
+      }
+    }
+  );
+
   // check if templatePartPath has the string 'organism' in it
   if (templatePartPath.includes('organism')) {
     options.filter(option => option.value.propName !== 'id');
@@ -39,7 +50,7 @@ const filePrompt = async function (file, passedValue = false) {
         value: {
           varName: 'id',
           propName: 'id',
-          value: '$is_gutenberg ? get_isset_val($block, \'anchor\') : get_acf_field_value(\'anchor_tag\')'
+          value: 'get_block_id($block)'
         }
       },
       ...options
@@ -71,13 +82,7 @@ const fileContent = function (file, props) {
 
   props = (props && props.length) ? props : [];
   
-  let variables = [
-    {
-      varName: 'is_gutenberg',
-      value: 'isset($block)',
-    },
-    ...props
-  ];
+  let variables = props;
 
   // Determine the longest varName length for alignment of variable assignments
   const longestVarNameLength = variables.length
@@ -100,7 +105,7 @@ ${variables.map(variable => {
     return `    $${varNamePadded} = ${variable.value};`;
   }
 
-  return `    $${varNamePadded} = get_acf_field_value( '${variable.fieldName}', $is_gutenberg );`;
+  return `    $${varNamePadded} = get_block_field( '${variable.fieldName}', $block );`;
 }).join('\n')}
 ?>
 

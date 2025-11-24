@@ -16,11 +16,12 @@ const fileContent = function (file) {
     "name": "${dirName}/${folderName}",
     "title": "${folderTitle}",
     "description": "${folderTitle} module.",
-    "category": "theme",
-    "apiVersion": 2,
+    "category": "${dirName}",
+    "apiVersion": 3,
     "acf": {
         "mode": "preview",
-        "renderTemplate": "template-parts/${dirName}/${folderName}/${folderName}.block.php"
+        "renderTemplate": "template-parts/${dirName}/${folderName}/${folderName}.block.php",
+        "blockVersion": 3
     },
     "supports": {
         "anchor": true

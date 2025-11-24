@@ -1,0 +1,64 @@
+const prompts = require('../utils/prompts');
+const components = require('../scaffolds/react/component/common.js');
+
+function generateReactComponentFiles(folder) {
+  const fileTemplates = {
+    'Component' : {
+      'Index'     : 'index',
+      'Component' : 'component',
+    },
+    'Style'   : 'style',
+    'Stories' : 'stories',
+  };
+
+  prompts.pickMany(
+    Object.keys(fileTemplates),
+    'Select File Types to Generate',
+    'Select one or more file types to generate'
+  ).then((selectedFiles) => {
+    if (!selectedFiles || selectedFiles.length === 0) {
+      prompts.notification('No files selected.');
+      return;
+    }
+
+    const includesComponent = selectedFiles.includes('Component');
+
+    // if includesComponent is true, set 'Component' as the last file to generate
+    if (includesComponent) {
+      selectedFiles = selectedFiles.filter((selected) => selected !== 'Component');
+      selectedFiles.push('Component');
+    }
+
+    selectedFiles.forEach((selected) => {
+      const componentKeyOrObject = fileTemplates[selected];
+
+      let openAfterWrite = selected === selectedFiles[selectedFiles.length - 1] || (includesComponent && selected === 'Component');
+
+      if (typeof componentKeyOrObject === 'object') {
+        const lastSubIndex = Object.keys(componentKeyOrObject).length - 1;
+        // If the option generates multiple files
+        Object.keys(componentKeyOrObject).forEach((subKey, subIndex) => {
+          const subComponent = componentKeyOrObject[subKey];
+          if (components[subComponent] && typeof components[subComponent].generate === 'function') {
+            const openFromHere = openAfterWrite;
+            // if openAfterWrite is true and there are subComponents, only open the last one
+            const openFile = openFromHere && (subIndex === lastSubIndex);
+            components[subComponent].generate(folder, openFile);
+          } else {
+            prompts.errorMessage(`No generator found for ${selected} - ${subKey}.`);
+          }
+        });
+      } else {
+        // If the option generates a single file
+        const componentKey = componentKeyOrObject;
+        if (components[componentKey] && typeof components[componentKey].generate === 'function') {
+          components[componentKey].generate(folder, openAfterWrite);
+        } else {
+          prompts.errorMessage(`No generator found for ${selected}.`);
+        }
+      }
+    });
+  });
+}
+
+module.exports = generateReactComponentFiles;

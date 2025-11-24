@@ -8,7 +8,7 @@
 		"url": "https://github.com/jeffcalaway/atomic-component-generator.git"
 	},
 	"icon": "icon.png",
-	"version": "2.3.6",
+	"version": "2.4.4",
 	"engines": {
 		"vscode": "^1.74.0"
 	},
@@ -37,7 +37,8 @@
     "onCommand:atomic-component-generator.generatePostTypeFiles",
     "onCommand:atomic-component-generator.generateTaxonomyFiles",
     "onCommand:atomic-component-generator.addToParentModule",
-	"onCommand:atomic-component-generator.addToProjectHandler"
+	"onCommand:atomic-component-generator.addToProjectHandler",
+	"onCommand:atomic-component-generator.generateReactComponentFiles"
 ],
 "contributes": {
 		"commands": [
@@ -68,6 +69,10 @@
 			{
 				"command": "atomic-component-generator.addToThemeFunctions",
 				"title": "Add to Theme Functions"
+			},
+			{
+				"command": "atomic-component-generator.generateReactComponentFiles",
+				"title": "Generate Files for a Component..."
 			}
 		],
 		"submenus": [
@@ -114,6 +119,10 @@
 				{
 					"command": "atomic-component-generator.generateTaxonomyFiles",
 					"when": "explorerResourceIsFolder && resourcePath =~ /includes\\//"
+				},
+				{
+					"command": "atomic-component-generator.generateReactComponentFiles",
+					"when": "explorerResourceIsFolder && resourcePath =~ /components\\/(archetypes|atoms|molecules|organisms)\\//"
 				}
 			]
 		}

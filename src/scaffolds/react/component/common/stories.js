@@ -1,10 +1,10 @@
-const format = require('../../../../../utils/format');
-const syntax = require('../../../../../utils/syntax');
+const format = require('../../../../utils/format');
+const syntax = require('../../../../utils/syntax');
 
 const filePath = function (file) {
     const folderName = syntax.getName(file);
     const targetPath = file.fsPath;
-    return `${targetPath}/${folderName}.stories.js}`;
+    return `${targetPath}/${folderName}.stories.jsx`;
 }
 
 const fileContent = function (file) {
@@ -19,14 +19,14 @@ import ${folderClass} from './${folderClass}';
 
 export default {
   title: '${dirTitle}/${folderTitle}',
-  component: ${folderClass},
   args: {
     
   }
 }
 
-export const Default = {}
-`
+const Template = (args) => <${folderClass} {...args} />
+
+export const Default = Template.bind({});`
 }
 
 module.exports = {
