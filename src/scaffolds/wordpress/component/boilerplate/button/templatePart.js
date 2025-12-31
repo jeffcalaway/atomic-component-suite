@@ -28,6 +28,7 @@ const fileContent = function (file) {
         'name',
         'role',
         'rel',
+        'itemprop',
         'data',
         'is_disabled',
         'is_download',
@@ -54,6 +55,7 @@ const fileContent = function (file) {
         'name',
         'role',
         'rel',
+        'itemprop',
         'is_disabled' => 'disabled',
         'is_download' => 'download'
     ]);
@@ -68,16 +70,7 @@ const fileContent = function (file) {
         $rel_attr = attr('rel', $rel);
     }
 
-    $data_attrs = [];
-    switch (gettype($data)) {
-        case "string":
-            $data_attrs[] = get_data_attr($data);
-            break;
-            
-        case "array":
-            $data_attrs = array_map('get_data_attr', array_keys($data), array_values($data));
-            break;
-    }
+    $data_attrs = get_data_attrs($data);
 
     $class = $props->class([
         '${className}',
@@ -98,7 +91,8 @@ const fileContent = function (file) {
 
         <div
             class="<?php echo $class; ?>"
-            <?php echo join(' ', $data_attrs); ?>
+            <?php echo $itemprop_attr; ?>
+            <?php echo $data_attrs; ?>
         ><?php echo $content; ?></div>
 
     <?php elseif ( $url ) : ?>
@@ -115,7 +109,8 @@ const fileContent = function (file) {
             <?php echo $aria_selected_attr; ?>
             <?php echo $download_attr; ?>
             <?php echo $tabindex_attr; ?>
-            <?php echo join(' ', $data_attrs); ?>
+            <?php echo $itemprop_attr; ?>
+            <?php echo $data_attrs; ?>
         ><?php echo $content;?></a>
 
     <?php else : ?>
@@ -131,7 +126,8 @@ const fileContent = function (file) {
             <?php echo $tabindex_attr; ?>
             <?php echo $name_attr; ?>
             <?php echo $role_attr; ?>
-            <?php echo join(' ', $data_attrs); ?>
+            <?php echo $itemprop_attr; ?>
+            <?php echo $data_attrs; ?>
             <?php echo $disabled_attr; ?>
         ><?php echo $content; ?></button>
 

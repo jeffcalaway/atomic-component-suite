@@ -15,7 +15,7 @@ const fileContent = function (file) {
   const className = `${dirLetter}-${folderName}`;
 
   return `.${className} {
-    @include theme-margins;
+    @include section-margins;
 }`;
 }
 
