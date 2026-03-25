@@ -4,7 +4,7 @@ const syntax = require('../../../../utils/syntax');
 const filePath = function (file) {
     const folderName = syntax.getName(file);
     const targetPath = file.fsPath;
-    return `${targetPath}/${folderName}.stories.jsx`;
+    return `${targetPath}/${folderName}.stories.js`;
 }
 
 const fileContent = function (file) {
@@ -14,8 +14,7 @@ const fileContent = function (file) {
   const dirName     = syntax.getDirName(file);
   const dirTitle    = format.toCapsAndSpaces(dirName);
 
-  return `import React from 'react'
-import ${folderClass} from './${folderClass}';
+  return `import ${folderClass} from './${folderClass}';
 
 export default {
   title: '${dirTitle}/${folderTitle}',

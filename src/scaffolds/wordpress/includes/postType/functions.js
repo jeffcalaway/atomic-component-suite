@@ -52,16 +52,15 @@ const fileContent = function (file) {
 use ${projectNamespace}\\Includes\\${className}\\${singleClass};
 
 //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
-// ✅ Get ${pluralTitle} Page Link
+// ✅ Get ${pluralTitle} Archive Url
 //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 /**
- * Retrieve the link to the ${pluralRef} archive page.
+ * Retrieve the url to the ${pluralRef} archive page.
  * 
  * @return string
  */
-function get_${pluralSnake}_link() {
-    $option = get_option('page_for_${pluralSnake}');
-    return $option ? get_permalink($option) : '';
+function get_${pluralSnake}_archive_url() {
+    return get_post_type_archive_link('${singleRef}');
 }
 
 

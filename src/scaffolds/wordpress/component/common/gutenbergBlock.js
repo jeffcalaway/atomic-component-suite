@@ -30,7 +30,7 @@ const filePrompt = async function (file, passedValue = false) {
     };
   });
 
-  options.push(
+  options = [
     {
       label: 'custom_class',
       value: {
@@ -38,12 +38,13 @@ const filePrompt = async function (file, passedValue = false) {
         propName: 'class',
         value: 'get_block_class($block)'
       }
-    }
-  );
+    },
+    ...options
+  ];
 
   // check if templatePartPath has the string 'organism' in it
   if (templatePartPath.includes('organism')) {
-    options.filter(option => option.value.propName !== 'id');
+    options = options.filter(option => option.value.propName !== 'id');
     options = [
       {
         label: 'anchor_tag',

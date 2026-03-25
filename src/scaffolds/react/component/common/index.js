@@ -3,7 +3,7 @@ const syntax = require('../../../../utils/syntax');
 
 const filePath = function (file) {
     const targetPath = file.fsPath;
-    return `${targetPath}/index.jsx`;
+    return `${targetPath}/index.js`;
 }
 
 const fileContent = function (file) {

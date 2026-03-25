@@ -4,7 +4,7 @@ const syntax = require('../../../../utils/syntax');
 const filePath = function (file) {
     const folderName = syntax.getName(file);
     const targetPath = file.fsPath;
-    return `${targetPath}/${folderName}.jsx`;
+    return `${targetPath}/${folderName}.js`;
 }
 
 const fileContent = function (file) {
@@ -16,17 +16,14 @@ const fileContent = function (file) {
 
   const className = `${dirLetter}-${folderKebab}`;
 
-  return `import React from 'react';
-import clsx from 'clsx';
-
-import './${folderClass}.scss';
+  return `import classNames from '@utils/classNames';
 
 const ${folderClass} = ({
   className,
   ...rest
 }) => {
   const classBase = '${className}';
-  const classes   = clsx(classBase, className);
+  const classes   = classNames(className, classBase);
 
   return (
     <div className={classes} {...rest}>
