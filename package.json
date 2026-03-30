@@ -8,7 +8,7 @@
 		"url": "https://github.com/jeffcalaway/atomic-component-generator.git"
 	},
 	"icon": "icon.png",
-	"version": "2.5.0",
+	"version": "2.5.12",
 	"engines": {
 		"vscode": "^1.74.0"
 	},
@@ -38,7 +38,8 @@
     "onCommand:atomic-component-generator.generateTaxonomyFiles",
     "onCommand:atomic-component-generator.addToParentModule",
 	"onCommand:atomic-component-generator.addToProjectHandler",
-	"onCommand:atomic-component-generator.generateReactComponentFiles"
+	"onCommand:atomic-component-generator.generateReactComponentFiles",
+	"onCommand:atomic-component-generator.generateReactBoilerplateFiles"
 ],
 "contributes": {
 		"commands": [
@@ -73,6 +74,10 @@
 			{
 				"command": "atomic-component-generator.generateReactComponentFiles",
 				"title": "Generate Files for a Component..."
+			},
+			{
+				"command": "atomic-component-generator.generateReactBoilerplateFiles",
+				"title": "Generate Files from a Boilerplate..."
 			}
 		],
 		"submenus": [
@@ -122,6 +127,10 @@
 				},
 				{
 					"command": "atomic-component-generator.generateReactComponentFiles",
+					"when": "explorerResourceIsFolder && resourcePath =~ /components\\/(archetypes|atoms|molecules|organisms)\\//"
+				},
+				{
+					"command": "atomic-component-generator.generateReactBoilerplateFiles",
 					"when": "explorerResourceIsFolder && resourcePath =~ /components\\/(archetypes|atoms|molecules|organisms)\\//"
 				}
 			]
