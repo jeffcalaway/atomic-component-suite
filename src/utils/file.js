@@ -82,38 +82,61 @@ const getProps = function (filePath) {
     }
 
     const content = fs.readFileSync(filePath, 'utf8');
+    const extension = path.extname(filePath).toLowerCase();
 
-    // Regex to match $props->admit_props([...])
-    const regex = /\$props->admit_props\s*\(\s*\[\s*([\s\S]*?)\s*\]\s*\)/;
-    const match = content.match(regex);
+    if (extension === '.php') {
+      const regex = /\$props->admit_props\s*\(\s*\[\s*([\s\S]*?)\s*\]\s*\)/;
+      const match = content.match(regex);
 
-    if (match && match[1]) {
-      let propsContent = match[1];
+      if (match && match[1]) {
+        let propsContent = match[1];
 
-      // Step 1: Remove single-line comments (//...) and multi-line comments (/* ... */)
-      propsContent = propsContent
-        .replace(/\/\/.*$/gm, '')    // Remove single-line comments
-        .replace(/\/\*[\s\S]*?\*\//g, ''); // Remove multi-line comments
+        propsContent = propsContent
+          .replace(/\/\/.*$/gm, '')
+          .replace(/\/\*[\s\S]*?\*\//g, '');
 
-      // Step 2: Remove any trailing commas and unnecessary whitespace
-      propsContent = propsContent
-        .replace(/,\s*$/m, '') // Remove trailing comma at the end
-        .trim();
+        propsContent = propsContent
+          .replace(/,\s*$/m, '')
+          .trim();
 
-      // Step 3: Use a regex to match all quoted strings within the array
-      const stringRegex = /['"]([^'"]+)['"]/g;
-      const props = [];
-      let stringMatch;
+        const stringRegex = /['"]([^'"]+)['"]/g;
+        const props = [];
+        let stringMatch;
 
-      while ((stringMatch = stringRegex.exec(propsContent)) !== null) {
-        props.push(stringMatch[1].trim());
+        while ((stringMatch = stringRegex.exec(propsContent)) !== null) {
+          props.push(stringMatch[1].trim());
+        }
+
+        return props;
       }
 
-      return props;
-    } else {
       console.warn(`No matching props pattern found in file: ${filePath}`);
       return [];
     }
+
+    if (extension === '.js') {
+      const regex = /=\s*\(\{\s*([\s\S]*?)\s*\}\)\s*=>\s*\{/;
+      const match = content.match(regex);
+
+      if (match && match[1]) {
+        const props = match[1]
+          .replace(/\/\/.*$/gm, '')
+          .replace(/\/\*[\s\S]*?\*\//g, '')
+          .split('\n')
+          .map((line) => line.trim().replace(/,$/, ''))
+          .map((line) => line.split('=')[0].trim())
+          .map((line) => line.split(':')[0].trim())
+          .filter((line) => line && !line.startsWith('...') && line !== 'className');
+
+        return props;
+      }
+
+      console.warn(`No matching props pattern found in file: ${filePath}`);
+      return [];
+    }
+
+    console.warn(`Unsupported file extension for props parsing: ${filePath}`);
+    return [];
   } catch (error) {
     console.error(`Error reading props from ${filePath} (getProps):`, error);
     return [];
