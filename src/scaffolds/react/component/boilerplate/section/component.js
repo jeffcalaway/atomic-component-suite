@@ -35,8 +35,7 @@ const ${folderClass} = ({
   );
 };
 
-export default ${folderClass};
-`
+export default ${folderClass};`
 }
 
 module.exports = {

@@ -8,7 +8,9 @@ function generateReactComponentFiles(folder) {
       'Component' : 'component',
     },
     'Style'   : 'style',
+    'Client'  : 'client',
     'Stories' : 'stories',
+    'Contentful™ Field Map' : 'contentful',
   };
 
   prompts.pickMany(
