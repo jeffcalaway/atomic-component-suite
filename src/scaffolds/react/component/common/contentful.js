@@ -69,7 +69,7 @@ const fileContent = function (file, context = {}) {
     }
     
     if (isImage) {
-      return `    ${prop}: await mapImage(await getField(entry, 'image'))`;
+      return `    ${prop}: await mapImage(await getField(entry, '${prop}'))`;
     }
 
     return `    ${prop}: await getField(entry, '${prop}', '')`;
