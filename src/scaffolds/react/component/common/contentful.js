@@ -53,6 +53,7 @@ const filePrompt = async function (file, passedValue = false) {
 const fileContent = function (file, context = {}) {
   const folderName = syntax.getName(file);
   const folderClass = format.toCapsAndSnake(folderName);
+  const directoryName = syntax.getDirName(file).toLowerCase();
   const componentName = format.toCapsAndCamel(folderName);
   const contentType = `${componentName.charAt(0).toLowerCase()}${componentName.slice(1)}`;
 
@@ -95,7 +96,7 @@ const fileContent = function (file, context = {}) {
   ];
 
   if (includeStoryArgs) {
-    importEntries.push(`import ${folderClass}Stories from './${folderClass}/${folderClass}.stories';`);
+    importEntries.push(`import ${folderClass}Stories from '@${directoryName}/${folderClass}/${folderClass}.stories';`);
     returnEntries.push(`    ...${folderClass}Stories.args`);
   }
 
