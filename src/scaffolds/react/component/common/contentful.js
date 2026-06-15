@@ -59,22 +59,20 @@ const fileContent = function (file, context = {}) {
 
   const selectedProps = (context && Array.isArray(context.propsToMap)) ? context.propsToMap : [];
   const mappedPropLines = selectedProps.map((prop) => {
-    const isButtonOrLink = prop.includes('button') || prop.includes('Button') || prop.includes('link') || prop.includes('Link');
+    const isButton = prop.includes('button') || prop.includes('Button');
     const isImage = prop.includes('image') || prop.includes('Image');
     
-    if (isButtonOrLink) {
-      return `    ${prop}: {
-      text: await getField(entry, '${prop}Text', ''),
-      url: await getField(entry, '${prop}Url', '')
-    }`;
+    if (isButton) {
+      return `    ${prop}: await getButtonField('${prop}', entry)`;
     }
     
     if (isImage) {
-      return `    ${prop}: await mapImage(await getField(entry, '${prop}'))`;
+      return `    ${prop}: await getImageField('${prop}', entry)`;
     }
 
-    return `    ${prop}: await getField(entry, '${prop}', '')`;
+    return `    ${prop}: await getField('${prop}', entry)`;
   });
+
   const includeStoryArgs = context && context.includeStoryArgs;
 
   const helperImports = [
@@ -83,7 +81,11 @@ const fileContent = function (file, context = {}) {
   ];
 
   if (selectedProps.some((prop) => prop.includes('image') || prop.includes('Image'))) {
-    helperImports.push('mapImage');
+    helperImports.push('getImageField');
+  }
+
+  if (selectedProps.some((prop) => prop.includes('button') || prop.includes('Button'))) {
+    helperImports.push('getButtonField');
   }
 
   const importEntries = [

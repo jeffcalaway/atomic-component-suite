@@ -8,7 +8,7 @@
 		"url": "https://github.com/jeffcalaway/atomic-component-generator.git"
 	},
 	"icon": "icon.png",
-	"version": "2.9.2",
+	"version": "2.9.3",
 	"engines": {
 		"vscode": "^1.74.0"
 	},
@@ -127,7 +127,7 @@
 				},
 				{
 					"command": "atomic-component-generator.generateReactComponentFiles",
-					"when": "explorerResourceIsFolder && resourcePath =~ /components\\/(archetypes|atoms|molecules|organisms)\\//"
+					"when": "explorerResourceIsFolder && resourcePath =~ /components\\/(archetypes|atoms|molecules|organisms|templates)\\//"
 				},
 				{
 					"command": "atomic-component-generator.generateReactBoilerplateFiles",
