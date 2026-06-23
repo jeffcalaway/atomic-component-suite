@@ -76,7 +76,6 @@ const fileContent = function (file, context = {}) {
   const includeStoryArgs = context && context.includeStoryArgs;
 
   const helperImports = [
-    'getEntryId',
     'getField'
   ];
 
@@ -93,7 +92,7 @@ const fileContent = function (file, context = {}) {
   ];
   const returnEntries = [
     '    type: contentType',
-    '    id: getEntryId(entry)',
+    "    id: await getField('anchorTag', entry)",
     ...mappedPropLines
   ];
 
