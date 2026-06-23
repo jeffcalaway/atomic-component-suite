@@ -58,7 +58,58 @@ const fileContent = function (file, context = {}) {
   const contentType = `${componentName.charAt(0).toLowerCase()}${componentName.slice(1)}`;
 
   const selectedProps = (context && Array.isArray(context.propsToMap)) ? context.propsToMap : [];
-  const mappedPropLines = selectedProps.map((prop) => {
+
+  const hasKicker = selectedProps.includes('kicker');
+  const hasHeading = selectedProps.includes('heading');
+  const hasTitle = selectedProps.includes('title');
+  const hasBody = selectedProps.includes('body');
+  const hasButton = selectedProps.includes('button');
+  const hasButtons = selectedProps.includes('buttons');
+  const hasPrimaryButton = selectedProps.includes('primaryButton');
+  const hasSecondaryButton = selectedProps.includes('secondaryButton');
+  const hasBreadcrumbs = selectedProps.includes('breadcrumbs');
+  const hasBothDefaultButtons = hasPrimaryButton && hasSecondaryButton;
+  const hasFullContentFields = hasKicker && hasHeading && !hasTitle && hasBody && hasPrimaryButton && hasSecondaryButton && !hasButton && !hasButtons;
+
+  const contentFieldIncludes = [];
+  if (hasKicker) {
+    contentFieldIncludes.push('kicker');
+  }
+  if (hasHeading) {
+    contentFieldIncludes.push('heading');
+  } else if (hasTitle) {
+    contentFieldIncludes.push('title');
+  }
+  if (hasBody) {
+    contentFieldIncludes.push('body');
+  }
+  if (hasBothDefaultButtons || hasButtons) {
+    contentFieldIncludes.push('buttons');
+  }
+
+  if (hasButton) {
+    contentFieldIncludes.push('button');
+  }
+
+  if (!hasBothDefaultButtons && !hasButtons) {
+    if (hasPrimaryButton) {
+      contentFieldIncludes.push('primaryButton');
+    }
+    if (hasSecondaryButton) {
+      contentFieldIncludes.push('secondaryButton');
+    }
+  }
+
+  const hasContentFields = contentFieldIncludes.length > 0;
+
+  const remainingProps = selectedProps.filter((prop) => {
+    return prop !== 'kicker' && prop !== 'heading' && prop !== 'title' && prop !== 'body' &&
+           prop !== 'button' && prop !== 'buttons' &&
+           prop !== 'primaryButton' && prop !== 'secondaryButton' &&
+           prop !== 'breadcrumbs';
+  });
+
+  const mappedPropLines = remainingProps.map((prop) => {
     const isButton = prop.includes('button') || prop.includes('Button');
     const isImage = prop.includes('image') || prop.includes('Image');
     
@@ -79,22 +130,49 @@ const fileContent = function (file, context = {}) {
     'getField'
   ];
 
-  if (selectedProps.some((prop) => prop.includes('image') || prop.includes('Image'))) {
+  if (hasContentFields) {
+    helperImports.push('getContentFields');
+  }
+
+  if (remainingProps.some((prop) => prop.includes('image') || prop.includes('Image'))) {
     helperImports.push('getImageField');
   }
 
-  if (selectedProps.some((prop) => prop.includes('button') || prop.includes('Button'))) {
+  if (remainingProps.some((prop) => prop.includes('button') || prop.includes('Button'))) {
     helperImports.push('getButtonField');
   }
 
   const importEntries = [
     `import { ${helperImports.join(', ')} } from '@lib/contentful/helpers';`
   ];
+
+  if (hasBreadcrumbs) {
+    importEntries.push(`import { getBreadcrumbs } from '@utils/page';`);
+  }
+
   const returnEntries = [
     '    type: contentType',
     "    id: await getField('anchorTag', entry)",
-    ...mappedPropLines
   ];
+
+  if (hasContentFields) {
+    if (hasFullContentFields) {
+      returnEntries.push('    ...await getContentFields(entry)');
+    } else {
+      const includeLines = contentFieldIncludes.map((item) => `        '${item}'`).join(',\n');
+      returnEntries.push(`    ...await getContentFields(entry, {
+      include: [
+${includeLines}
+      ]
+    })`);
+    }
+  }
+
+  returnEntries.push(...mappedPropLines);
+
+  if (hasBreadcrumbs) {
+    returnEntries.push('    breadcrumbs: await getBreadcrumbs(pathname)');
+  }
 
   if (includeStoryArgs) {
     importEntries.push(`import ${folderClass}Stories from '@${directoryName}/${folderClass}/${folderClass}.stories';`);
@@ -104,11 +182,13 @@ const fileContent = function (file, context = {}) {
   const importLines = importEntries.join('\n');
   const returnLines = returnEntries.join(',\n');
 
+  const breadcrumbsParam = hasBreadcrumbs ? ', { pathname } = {}' : '';
+
   return `${importLines}
 
 export const contentType = '${contentType}';
 
-export default async function map${componentName}(entry) {
+export default async function map${componentName}(entry${breadcrumbsParam}) {
   return {
 ${returnLines}
   };
